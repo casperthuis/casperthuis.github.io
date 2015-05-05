@@ -1,7 +1,4 @@
-/* Function reads Scores played by the teams and calculates the difference.
- */
-
-function calculatescore(callback){
+function readScores(callback){
 
         $.getJSON('test.json', function(scores) {
          callback(scores);   
@@ -20,7 +17,10 @@ function calculatescore(callback){
            scoresarray[j] =  Math.abs(scores.games[i]-scores.games[i+1]);
            j++;
         };
-        //console.log(scores)
+        console.log(scores)
         //console.log(scoresarray)      
   		});
-};
+}
+
+/* Function reads Scores played by the teams and calculates the difference.
+ */

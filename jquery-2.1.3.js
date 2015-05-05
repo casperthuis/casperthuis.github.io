@@ -4673,13 +4673,7 @@ jQuery.Event = function( src, props ) {
 
 		// Events bubbling up the document may have been marked as prevented
 		// by a handler lower down the tree; reflect the correct value.
-		this.isDefaultPrevented = src.defaultPrevented ||
-				src.defaultPrevented === undefined &&
-				// Support: Android<4.0
-				src.returnValue === false ?
-			returnTrue :
-			returnFalse;
-
+		this.isDefaultPrevented = src.defaultPrevented ? returnTrue : returnFalse;
 	// Event type
 	} else {
 		this.type = src;
