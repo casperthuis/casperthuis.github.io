@@ -14,7 +14,7 @@ function calculatescore(callback){
         //console.log(scores.games[1])
         //console.log(Math.abs(scores.games[1]-scores.games[2]));
         var j = 0;
-        for (var i = 0; i < (data.games.length/2); i = i + 2){
+        for (var i = 0; i < scores.games.length; i = i + 2){
             
            //console.log(Math.abs(scores.games[i]-scores.games[i+1]));
            scoresarray[j] =  Math.abs(scores.games[i]-scores.games[i+1]);
