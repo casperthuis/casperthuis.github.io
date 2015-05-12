@@ -1,7 +1,15 @@
 /*
 Least squares method to obtain be best rating given the score.
 This function take the match matrix and scoresdifference array
-to compute the nessary rating.
+to compute the nessary rating. The computation that takes place
+here is X^t*X*r = X^t*y. Where X is a sparse matrix with 1 on 
+on the place where a team wins and -1 on a place where a team loses,
+the rest are zeros. y is the a scoredifference vector. 
+To get the least squares solution the matrix is interved and multiplied
+by the y vector.  
+Input : wMatrix[160][40] Sparse matrix
+        scores[160][2]
+Output : rating[40][1]
 */
 function leastSquares(wMatrix,scores){
         // calculate score difference
@@ -15,24 +23,15 @@ function leastSquares(wMatrix,scores){
         var size = wTranspose.size();
         var wTransposeArray = wTranspose.valueOf();
         
-        // My own matrix multiplication because of the dimesions that do not match of the match matrix and the scoresarray. The problem is that transpose function doenst work on 1d arrays hence the multiplication needs to be preform by this function.
-        var sum = 0;
-        yVector = new Array();
-        for(var i = 0; i < size[0]-1;i++){
-            for(var j = 0;j < scoresarray.length;j++){
-                sum = sum + wTransposeArray[i][j]*scoresarray[j];
-            }
-            yVector[i] = sum;
-            sum = 0;   
-        }
+        // Multiply the Wtranspose with the scoresarray to obtain the yvector
+        var yVector = math.multiply(wTranspose,scoresarray).valueOf();
         
-
         // mulitply match matrix with its transpose to obtain x.
         var xMatrix = math.multiply(wTranspose, wMatrix);    
-        // Change last element in 0
-        yVector[yVector.length] = 0;
-    
         
+        // Change last element in 0
+        yVector[yVector.length-1] = 0;
+    
         // add a rows of one to the last row.
         xMatrix = xMatrix.valueOf(); 
         for(var i = 0; i < size[0];i++){
@@ -41,6 +40,6 @@ function leastSquares(wMatrix,scores){
         
         // The least squares method by inv(x)*y one would get the best solution. return the solution.
         inv = math.inv(xMatrix);
-        return math.multiply(inv,yVector);
+        return math.multiply(inv,yVector).valueOf();
 
     };

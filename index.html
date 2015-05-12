@@ -5,21 +5,25 @@
     <title>Index</title>
     <script src="jquery-2.1.3.min.js"></script>
     <script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/1.6.0/math.min.js" type="text/javascript"></script>
+    <script scr="readAPI.js"></script>
     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <script src="jquery/jquery-ui.js"></script>
     <script src="readDataFiles.js"></script>
     <script src="calculateScoreDifference.js"></script>
     <script src="leastSquares.js"></script>
     <script src="listScores.js"></script>
+    <script src="listScoresNew.js"></script>
     <script src="showRating.js"></script>
     <script src="bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
+    <script src="tournamentObject.js"></script>
+    <script src="readapi.js"></script>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="jquery/jquery-ui.css">
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="dashboard.css" rel="stylesheet">
-
-    <script src="bootstrap/js/bootstrap.min.js"></script>
+    
 
     
 
@@ -102,9 +106,10 @@
               <thead>
                 <tr>
                   <th>Game #</th>
-                  <th>Team</th>
-                  <th>Points for</th>
-                  <th>Points Against</th>
+                  <th>Team 1</th>
+                  <th>Team 2</th>
+                  <th>Points team 1</th>
+                  <th>Points team 2</th>
                   <th>location</th>
                 </tr>
               </thead>
@@ -130,21 +135,19 @@
     // Read the files
     files = readDataFiles(scoresFile,matchFile,teamFile);
     
+
+
+   
     // Obtain the data.
     scores = files[0];
     wMatrix = files[1];
     teamNames = files[2];
     
-    // caluclate rating
-    ratings = leastSquares(wMatrix,scores);
-
-    // Output the rating and the correpsonding team to the page.
-    showRating(teamNames, ratings)
     
 
     teamName = "Frizzly Bears"
 
-    listScores(teamNames, wMatrix, scores, teamName);
+    //listScores(teamNames, wMatrix, scores, teamName);
 
     $(function() {
     var availableTags = teamNames;
@@ -158,11 +161,41 @@
     function newGameTable() {
       teamName = document.getElementById("tags").value ;
       $("tr").remove(".gamesRow");
-      listScores(teamNames, wMatrix, scores, teamName);
+      listScoresNew(tournament, teamName);
     }
 
 
 
+
+    /**** TEST *****/
+
+     $.ajax({
+        url: "data.json",
+        beforeSend: function(xhr){
+            if (xhr.overrideMimeType)
+            {
+                xhr.overrideMimeType("application/json");
+            }
+        },
+        async: false,
+        dataType: 'json',
+        success: function(data) {
+            dataMatrix = data.dataMatrix;
+            teamNames = data.teamnames;
+        }
+    });
+    
+    
+     
+    tournament = readAPI();
+
+    wMatrix = tournament.createWMatrix();
+    sMatrix = tournament.createSMatrix();
+    ratings = leastSquares(wMatrix,sMatrix);
+
+    showRating(tournament.teamNames, ratings);
+
+    listScoresNew(tournament, teamName);
 
 
 

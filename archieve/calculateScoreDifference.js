@@ -2,15 +2,15 @@
 	returns the scores difference in an array. It creates a
 	dynamic array and loops by step 2 of the over i.
 	J is created because the array is half the size of the old one.
-    Input : scores[160][2].
-    Output: scoredifference[160][1]
 */
 function calculateScoreDifference(scores){
-	var scoresDifferenceArray = new Array(scores.length); 
-    
+	var scoresarray = new Array(scores.length); 
+    console.log(scores.length);
+    //var j = 0;
     for (var i = 0; i < scores.length; i++){
-        scoresDifferenceArray[i] =  Math.abs(scores[i][0]-scores[i][1]);    
+        scoresarray[i] =  Math.abs(scores[i][0]-scores[i][1]);
+        //j++;
     };
-    
-    return scoresDifferenceArray;
+    console.log(scoresarray)
+    return scoresarray;
 }

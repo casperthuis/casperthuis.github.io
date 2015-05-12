@@ -1,19 +1,16 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>TEST HIER JE CODE</title>
-  <link rel="stylesheet" href="jquery/jquery-ui.css">
-  <script src="jquery-2.1.3.min.js"></script>
-  <script src="jquery/jquery-ui.js"></script>
-  
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/mathjs/1.6.0/math.js" type="text/javascript"></script>
-  <script src="tournamentObject.js"></script>
-  <script src="readapi.js"></script>
-  <script>
-        
-        $.ajax({
+/*
+	The read API function reads in the API from league vine and filters the correct
+	information. With the Url add the tournament. WATCH OUT SOME VARIABLE CAN BE NULL,
+	WHEN THIS HAPPEND THE FUNCTION STOPS! NEEDS TO BE FIXED.
+	After which a tournament object is returned.	
+
+*/
+function readAPI(){
+		
+		// Create Stream to read in files.
+		$.ajax({
         url: "data/apifilewithbugs.json",
+        /*URL CURRENTLY  NOT WORKING DUE TO NULL VARIABLES */
         //url: "https://api.leaguevine.com/v1/games/?tournament_id=19176&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
         beforeSend: function(xhr){
             if (xhr.overrideMimeType)
@@ -25,10 +22,12 @@
         dataType: 'json',
 
         success: function(data) {
-            //console.log(data);
-            //test = data;
+        	// Create global dataMatrix, teamNames and tournament variables. 
             dataMatrix = new Array();
             teamNames = new Array();
+            tournamentName = data.objects[0].tournament.name;
+
+            //Create a list of the teamNames to create indexs of the teamNames
             for(var i = 0; i < data.objects.length;i++){
               var teamName1 = data.objects[i].team_1.name
               var teamName2 = data.objects[i].team_2.name
@@ -39,8 +38,18 @@
                 teamNames[teamNames.length] = teamName2; 
               }
             }
-            //data.objects[1].game_site.event_site.name
-            tournamentName = data.objects[0].tournament.name;
+            
+            /* Create a matchMatrix with the following objects
+            	- id of match
+            	- team index 1
+            	- team index 2
+            	- team score 1
+            	- team score 2
+            	- start time of match
+            	- round number
+            	this matrix have the size of all the match by 7.
+            	WHEN LOCATION WORK ADD IN LAST POSISTION SO THAT OTHER FUNCTION KEEP WORKING!!	
+            	*/
             for(var i = 0; i < data.objects.length;i++){
               id = data.objects[i].id;
               teamName = data.objects[i].team_1.name;
@@ -49,8 +58,10 @@
               team2Index = teamNames.indexOf(teamName);
               score1 = data.objects[i].team_1_score;
               score2 = data.objects[i].team_2_score;
+              /* CURRENT LOCATION DOENST WORK FOR UNKNOW REASONS */
               //location = //data.objects[i].game_site.event_site.name //+ ": " + data.objects[i].game_site.name;
               //console.log(location = data.objects[i].game_site.name);
+              
               round = data.objects[i].swiss_round.round_number;
               if(round === undefined){
                 round = data.objects[i].swiss_round;
@@ -60,21 +71,10 @@
 
               dataMatrix[i] = [id,team1Index,team2Index,score1,score2,startTime,round];
             }
-              tournament = new tournamentObject(dataMatrix,teamNames,tournamentName);
-              
               
         }
     });
-
-    
-  </script>
-</head>
-<body>
-
-
- 
-
- 
- 
-</body>
-</html>
+		tournament = new tournamentObject(dataMatrix,teamNames,tournamentName);
+        //console.log(tournament)
+        return tournament;
+};
