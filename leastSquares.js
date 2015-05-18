@@ -7,21 +7,23 @@ on the place where a team wins and -1 on a place where a team loses,
 the rest are zeros. y is the a scoredifference vector. 
 To get the least squares solution the matrix is interved and multiplied
 by the y vector.  
-Input : wMatrix[160][40] Sparse matrix
-        scores[160][2]
-Output : rating[40][1]
+Input : wMatrix[matches][teams] Sparse matrix
+        scores[matches][2]
+Output : rating[teams][1]
 */
 function leastSquares(wMatrix,scores){
         // calculate score difference
-        var scoresarray = calculateScoreDifference(scores);
+       
+        scoresarray = calculateScoreDifference(scores);
         
+       
         // transpose match matrix to obtain wtranpose for calculation.
         var wTranspose = math.transpose(wMatrix);
-        
+    
         // Create a matrix object to obtain size easily and get the value of the matrix again to obtain the array.
-        wTranspose = math.matrix(wTranspose);
+        var wTranspose = math.matrix(wTranspose);
         var size = wTranspose.size();
-        var wTransposeArray = wTranspose.valueOf();
+        
         
         // Multiply the Wtranspose with the scoresarray to obtain the yvector
         var yVector = math.multiply(wTranspose,scoresarray).valueOf();
@@ -31,7 +33,7 @@ function leastSquares(wMatrix,scores){
         
         // Change last element in 0
         yVector[yVector.length-1] = 0;
-    
+        
         // add a rows of one to the last row.
         xMatrix = xMatrix.valueOf(); 
         for(var i = 0; i < size[0];i++){
@@ -43,3 +45,21 @@ function leastSquares(wMatrix,scores){
         return math.multiply(inv,yVector).valueOf();
 
     };
+
+
+    /* Calculates the score difference for the scores matrix
+    returns the scores difference in an array. It creates a
+    dynamic array and loops by step 2 of the over i.
+    J is created because the array is half the size of the old one.
+    Input : scores[Matches][2].
+    Output: scoredifference[matches][1]
+*/
+function calculateScoreDifference(scores){
+    var scoresDifferenceArray = new Array(scores.length); 
+    
+    for (var i = 0; i < scores.length; i++){
+        scoresDifferenceArray[i] =  Math.abs(scores[i][0]-scores[i][1]);    
+    };
+    
+    return scoresDifferenceArray;
+}
