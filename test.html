@@ -8,8 +8,7 @@
     <script src="readapi.js"></script>
     <script src="tournamentObject.js"></script>
     <script src="leastSquares.js"></script>
-    <script src="math.js"></script>
-    <script src="showRating.js"></script>
+     <script src="math.js"></script>
     <style>
     
 
@@ -44,7 +43,6 @@ tournament =  readAPI();
  	wMatrix = tournament.createWMatrix();
     sMatrix = tournament.createSMatrix();
     ratings = leastSquares(wMatrix,sMatrix);
-    showRating(tournament.teamNames, ratings);
 
   wMatrixNew = tournament.createWMatrixWithRounds(4);
   sMatrixNew = tournament.createSMatrixWithRounds(4);
@@ -126,14 +124,12 @@ circles = group.selectAll("circle")
     .attr("opacity",function(d,i){ if(i === teamIndex){return 1;} else{ return 0.5} })
     .attr("cx", 20)
     .attr("r", 10)
-    /*
     .on("click", function(d,i) {      
             div.style("opacity", .9);      
             div .html(teamNames[i])  
                 .style("left", (d3.event.pageX) + "px")     
                 .style("top", (d3.event.pageY ) + "px");    
             })
-    */        
     .on("mouseover", function(d,i) {      
             div.transition()        
                 .duration(200)      

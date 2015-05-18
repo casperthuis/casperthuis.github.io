@@ -13,7 +13,7 @@ function readAPI(){
         //url: "https://api.leaguevine.com/v1/games/?tournament_id=19177&fields=[id%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
         /*URL CURRENTLY  NOT WORKING DUE TO NULL VARIABLES */
         //url: "https://api.leaguevine.com/v1/games/?tournament_id=19176&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
-        url: "https://api.leaguevine.com/v1/games/?tournament_id=18091&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+        //url: "https://api.leaguevine.com/v1/games/?tournament_id=18091&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
         beforeSend: function(xhr){
             if (xhr.overrideMimeType)
             {
@@ -68,7 +68,7 @@ function readAPI(){
               //location = //data.objects[i].game_site.event_site.name //+ ": " + data.objects[i].game_site.name;
               //console.log(location = data.objects[i].game_site.name);
               
-              console.log(round)
+              /*
               if(rounds < 1){
                 round = round
               }else{
@@ -76,13 +76,13 @@ function readAPI(){
                 round = round + 1
               }
               rounds = rounds - 1
+              */
               
-              /*
               var round = data.objects[i].swiss_round.round_number;
               if(round === undefined){
                 var round = data.objects[i].swiss_round;
               }
-              */
+              
               var startTime = data.objects[i].start_time;
 
               dataMatrix[i] = [id,team1Index,team2Index,score1,score2,startTime,round];
