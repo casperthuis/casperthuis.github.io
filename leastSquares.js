@@ -14,7 +14,7 @@ Output : rating[teams][1]
 function leastSquares(wMatrix,scores){
         // calculate score difference
        
-        scoresarray = calculateScoreDifference(scores);
+        var scoresDifference = calculateScoreDifference(scores);
         
        
         // transpose match matrix to obtain wtranpose for calculation.
@@ -26,7 +26,7 @@ function leastSquares(wMatrix,scores){
         
         
         // Multiply the Wtranspose with the scoresarray to obtain the yvector
-        var yVector = math.multiply(wTranspose,scoresarray).valueOf();
+        var yVector = math.multiply(wTranspose,scoresDifference).valueOf();
         
         // mulitply match matrix with its transpose to obtain x.
         var xMatrix = math.multiply(wTranspose, wMatrix);    
@@ -62,4 +62,19 @@ function calculateScoreDifference(scores){
     };
     
     return scoresDifferenceArray;
+}
+
+
+function leastSquaresNoInterdependance(wMatrix, scores){
+    var scoresDifference = calculateScoreDifference(scores);
+    
+    var ratings = new Array();
+    for(var i  = 0; i < wMatrix.length; i++){
+        var ratingDifference = scoresDifference[i]/2;
+        var indexTeamWin = wMatrix[i].indexOf(1);
+        var indexTeamLose = wMatrix[i].indexOf(-1);
+        ratings[indexTeamWin] = ratingDifference;
+        ratings[indexTeamLose] = -ratingDifference; 
+    }
+    return ratings;
 }

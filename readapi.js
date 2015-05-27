@@ -9,11 +9,26 @@ function readAPI(){
 		
 		// Create Stream to read in files.
 		$.ajax({
-        url: "data/apifilewithbugs.json",
-        //url: "https://api.leaguevine.com/v1/games/?tournament_id=19177&fields=[id%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
-        /*URL CURRENTLY  NOT WORKING DUE TO NULL VARIABLES */
+        //url: "data/apifilewithbugs.json",
+        // Women 2013 windmill
+        //url: "https://api.leaguevine.com/v1/games/?tournament_id=19177&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+        
+        // Mixed 2013 windmill
+        //url: "https://api.leaguevine.com/v1/games/?tournament_id=19178&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+        
+        // Open 2013 windmill
         //url: "https://api.leaguevine.com/v1/games/?tournament_id=19176&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
-        //url: "https://api.leaguevine.com/v1/games/?tournament_id=18091&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+         url: "data/windmillWindUp2013Open.json",
+        // Women 2012 windmill
+        //url: "https://api.leaguevine.com/v1/games/?tournament_id=18094&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+        
+        // Mixed 2012 windmill
+        //url: "https://api.leaguevine.com/v1/games/?tournament_id=18093&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+        
+        // Open 2012 windmill
+        // url: "https://api.leaguevine.com/v1/games/?tournament_id=18091&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+         
+        
         beforeSend: function(xhr){
             if (xhr.overrideMimeType)
             {
@@ -29,7 +44,7 @@ function readAPI(){
             dataMatrix = new Array();
             teamNames = new Array();
             tournamentName = data.objects[0].tournament.name;
-            
+            test = data;
             //Create a list of the teamNames to create indexs of the teamNames
             for(var i = 0; i < data.objects.length;i++){
               var teamName1 = data.objects[i].team_1.short_name;
@@ -53,10 +68,14 @@ function readAPI(){
             	this matrix have the size of all the match by 7.
             	WHEN LOCATION WORK ADD IN LAST POSISTION SO THAT OTHER FUNCTION KEEP WORKING!!	
             	*/
-            rounds = data.objects.length/(teamNames.length*0.5)
-            matchesPerRound = data.objects.length/rounds
-            round = 1
+            
+            
             for(var i = 0; i < data.objects.length;i++){
+              //console.log(i);
+              //console.log(!data.objects[i].swiss_round_id);
+              if(!data.objects[i].swiss_round_id){
+                continue;
+              }
               var id = data.objects[i].id;
               var teamName = data.objects[i].team_1.short_name;
               var team1Index = teamNames.indexOf(teamName);
@@ -68,28 +87,20 @@ function readAPI(){
               //location = //data.objects[i].game_site.event_site.name //+ ": " + data.objects[i].game_site.name;
               //console.log(location = data.objects[i].game_site.name);
               
-              /*
-              if(rounds < 1){
-                round = round
-              }else{
-                rounds = 20;
-                round = round + 1
-              }
-              rounds = rounds - 1
-              */
+              
               
               var round = data.objects[i].swiss_round.round_number;
-              if(round === undefined){
-                var round = data.objects[i].swiss_round;
-              }
+              
               
               var startTime = data.objects[i].start_time;
 
-              dataMatrix[i] = [id,team1Index,team2Index,score1,score2,startTime,round];
+              dataMatrix[dataMatrix.length] = [id,team1Index,team2Index,score1,score2,startTime,round];
+             
             }
               
         }
     });
+    
 		var tournament = new tournamentObject(dataMatrix,teamNames,tournamentName);
         
     return tournament;

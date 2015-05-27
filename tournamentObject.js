@@ -15,7 +15,9 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
       this.matchMatrix = dataMatrix;
       this.originalMatchMatrix = dataMatrix;
       this.numberOfRounds = dataMatrix[dataMatrix.length-1][6];
-      this.numberOfMatchesPerRound = dataMatrix.length/this.numberOfRounds;
+      //this.numberOfMatchesPerRound = dataMatrix.length/this.numberOfRounds;
+      
+
 
 
       /*  CreatewMatrix function create the w matrix needed for the least squares 
@@ -27,7 +29,7 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
       */
       this.createWMatrix = function(){
 
-        var wMatrix = math.zeros(this.matchMatrix.length, teamNames.length).valueOf();
+        var wMatrix = math.zeros(this.matchMatrix.length, this.teamNames.length).valueOf();
         for(var i = 0; i < this.matchMatrix.length; i++){
  
           
@@ -44,25 +46,25 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
             var teamLose = this.matchMatrix[i][1];
           }
 
-          for(var j = 0; j < this.teamNames.length; j++){
-            if(j === teamWin){
-            wMatrix[i][j] = 1;
-                 
-            }else if(j === teamLose){
-            wMatrix[i][j] = -1;
-            }
-          }
+          wMatrix[i][teamWin] = 1;
+          wMatrix[i][teamLose] = -1;
+          
         }
         return wMatrix;
       }
 
 
       this.createWMatrixWithRounds = function(round){
-
-        var wMatrix = math.zeros(this.numberOfMatchesPerRound*round, teamNames.length).valueOf();
-        for(var i = 0; i < this.numberOfMatchesPerRound*round; i++){
- 
+        
+        var wMatrix = new Array();
+        for(var i = 0; i < this.matchMatrix.length; i++){
           
+          var wRow = math.zeros(this.teamNames.length).valueOf();
+          var roundNumber = this.matchMatrix[i][6];
+          
+          if(roundNumber > round){
+            break;
+          }
           var score1 = this.matchMatrix[i][3];
           var score2 = this.matchMatrix[i][4];
           if(score1 > score2){
@@ -76,19 +78,17 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
             var teamLose = this.matchMatrix[i][1];
           }
 
-          for(var j = 0; j < this.teamNames.length; j++){
-            if(j === teamWin){
-            wMatrix[i][j] = 1;
-                 
-            }else if(j === teamLose){
-            wMatrix[i][j] = -1;
-            }
-          }
+          wRow[teamWin] = 1;
+          wRow[teamLose] = -1
+          wMatrix[i] = wRow; 
+          
         }
+
         return wMatrix;
       }
 
-      /*  CreateSMatrix function creates the correct s matrix that is needed for 
+
+            /*  CreateSMatrix function creates the correct s matrix that is needed for 
           the least sqaure algorithm. This function needs to be called before least 
           squares to that the correct scores are given.
           Input: None.
@@ -104,10 +104,21 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
       }
 
       this.createSMatrixWithRounds = function(round){
-        var sMatrix = math.zeros(this.numberOfMatchesPerRound*round, 2).valueOf();
-        for(var i = 0; i < this.numberOfMatchesPerRound*round; i++){
-          sMatrix[i][0] = this.matchMatrix[i][3];
-          sMatrix[i][1] = this.matchMatrix[i][4];
+        
+
+        //var sMatrix = math.zeros(this.numberOfMatchesPerRound*round, 2).valueOf();
+        var sMatrix = new Array();
+        
+        for(var i = 0; i < this.matchMatrix.length; i++){
+          var roundNumber = this.matchMatrix[i][6];
+          
+          if(roundNumber > round){
+            break;
+          }
+          var score1 = this.matchMatrix[i][3];
+          var score2 = this.matchMatrix[i][4];
+            
+          sMatrix[i] = [score1, score2]; 
         }
         return sMatrix;     
       }
@@ -119,7 +130,7 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
         Output: None
       */
 
-     this.newGameTable = function() {
+     this.newGameTable = function(canvas) {
 
       var teamName = document.getElementById("tags").value;
       // Check if the input is empty or contains a name that ins't a team
@@ -127,7 +138,8 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
         alert('No team has been picked');
       }else{
       $("tr").remove(".gamesRow");
-        listScoresNew(tournament, teamName);
+        opponents = this.listScoresInTable(teamName);
+        canvas.updateCirclesColor(teamName, opponents);
       }
     }
 
@@ -141,8 +153,8 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
           
           var matchArray = tournament.matchMatrix[matchIndex];
           if(operation === "+"){
-            if(this.matchMatrix[matchIndex][teamIndex+2] > 14 ){
-              alert('Score cannot go higher then 15');
+            if(this.matchMatrix[matchIndex][teamIndex+2] > 49 ){
+              alert('Score cannot go higher then 50');
               return this.matchMatrix[matchIndex][teamIndex+2];
             }else{
             //console.log(matchArray = tournament.matchMatrix[matchIndex]);
@@ -167,11 +179,13 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
 
       this.listScoresInTable = function(teamName){
         // Get team number
+        // Create array that contains the oponents of the current team
+        var allTeamsThatPlayed = new Array();
         var index = this.teamNames.indexOf(teamName);
     
         // Create empty array for the matches that have been played by the team
         var gamesPlayedByTeam = new Array();
-
+        
         // Fill the array with matches of the team that it played. It loops over all the matches and checks whether 
         // the teams has played as team 1([i][1]) or as team2[i][2]. If that is the case add to the array
         for( var i = 0; i < this.matchMatrix.length;i++){
@@ -206,11 +220,13 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
           var teamNumber2 = document.createTextNode(this.teamNames[currentGame[2]]);
           th3.appendChild(teamNumber2);
           
+          allTeamsThatPlayed[allTeamsThatPlayed.length] = currentGame[1];
+          allTeamsThatPlayed[allTeamsThatPlayed.length] = currentGame[2];
           // create score button to create a cell with a element
           var th4 = document.createElement("th");
           var th5 = document.createElement("th");
-          createButton(currentGame[3], th4, gamesPlayedByTeam[i], 1);
-          createButton(currentGame[4], th5, gamesPlayedByTeam[i], 2);
+          createButton(currentGame[3], th4, gamesPlayedByTeam[i], 1,this);
+          createButton(currentGame[4], th5, gamesPlayedByTeam[i], 2,this);
           
           // Add location(not working) and rounnumber
           var th6 = document.createElement("th");
@@ -229,7 +245,16 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
           tr.appendChild(th7);
         
         }
+      
+      // Remove the picked team and return the opponents that the picked team played against.
+      
+      var opponents = jQuery.grep(allTeamsThatPlayed, function(value) {
+        return value != index;
+      });
+
+      return opponents
       }
+
 }
 
 
@@ -242,7 +267,7 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
   Input: Score, Element(in table), gamePlayed(game infomation), team
   Output: None
 */
-function createButton(score, element, gamePlayed, team){
+function createButton(score, element, gamePlayed, team, tournament){
   // Create Html elements
   var buttonplus = $("<button> + </button>");
   var buttonmin = $("<button> - </button>");
@@ -260,7 +285,10 @@ function createButton(score, element, gamePlayed, team){
         element.appendChild(scoreTeam);
         buttonplus.appendTo(element);
         buttonmin.appendTo(element);
-        
+        wMatrix = tournament.createWMatrix();
+        sMatrix = tournament.createSMatrix();
+        newRatings = leastSquares(wMatrix, sMatrix);
+        canvas.updateCircles(newRatings); 
   });
 
   // function for a minus button
@@ -273,7 +301,10 @@ function createButton(score, element, gamePlayed, team){
         element.appendChild(scoreTeam);
         buttonplus.appendTo(element);
         buttonmin.appendTo(element);
-        
+        wMatrix = tournament.createWMatrix();
+        sMatrix = tournament.createSMatrix();
+        newRatings = leastSquares(wMatrix, sMatrix);
+        canvas.updateCircles(newRatings); 
   });
 
   // Append the button function to the buttons
