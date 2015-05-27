@@ -141,7 +141,7 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
       $("tr").remove(".gamesRow");
         opponents = this.listScoresInTable(this.teamName);
         canvas.scaleLineOnTeamOpponents(this.teamNames.indexOf(this.teamName), opponents);
-        //canvas.drawMatchLine(this.teamNames.indexOf(this.teamName), opponents);
+        canvas.drawMatchLine(this.teamNames.indexOf(this.teamName), opponents);
         //canvas.updateCirclesColor(this.teamNames.indexOf(this.teamName), opponents);
       }
     }

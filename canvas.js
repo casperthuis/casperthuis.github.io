@@ -263,15 +263,16 @@ function canvas(height,width,border, radius,ratings){
 	this.drawMatchLine = function(teamIndex, opponents){
 		this.canvas = group.append("line")
 		var ratings = this.currentRating;
-		console.log(ratings);
-
 		
+
+		ratingUnscaled = this.currentRating
+		console.log(ratingUnscaled)
 		var opponentsRatings = new Array();
 
 		for(var i = 0; i < opponents.length ;i++){
 			opponentsRatings[i] = ratings[opponents[i]];
 		}
-		console.log(opponentsRatings);
+		
 
 		var linearScale = d3.scale.linear()
                     .domain([d3.min(opponentsRatings), d3.max(opponentsRatings)])
@@ -281,24 +282,82 @@ function canvas(height,width,border, radius,ratings){
   			ratings[i] = linearScale(ratings[i]);
 		}
 
-		groupOfLine = group.append("g");
+		groupOfLineVertical = group.append("g");
 
-		groupOfLine.selectAll("line")
+		groupOfLineVertical.selectAll("line")
 					.data(opponentsRatings)
 					.enter()
 					.append("line")
-					.attr("y1", this.borderOfCanvas)
+					.attr("y1", this.borderOfCanvas+this.radiusOfCircles*3)
+
 		            .attr("x1", function(d){
 		            	return d
 		            })
 		            .attr("x2", function(d){
 		            	return d
 		            })
-		            .attr("y2", 200)
+		            .attr("y2", function(d,i){
+		            	return (50)+ 30*i;
+		            })
 		            .attr("stroke-width", 3)
-			        .attr("stroke","dimgray");
-		       
+			        .attr("stroke","dimgray")
+			        .attr("opacity", 0.6)
+			        
+		groupOfLineHorizontal = group.append("g")  
+
+		groupOfLineHorizontal.selectAll("line")
+									.data(opponentsRatings)
+									.enter()
+									.append("line")
+									.attr("y1", function(d,i){
+										return (50)+ 30*i;
+									})
+						       		.attr("x1", function(d){
+						            	return ratings[teamIndex];
+						            })
+									.attr("x2", function(d){
+						            	return d;
+						            })
+						            .attr("y2", function(d,i){
+						            	return (50)+ 30*i;
+						            })
+						            .attr("stroke-width", 3)
+							        .attr("stroke","dimgray")
+							        .attr("stroke-dasharray", 2, 2)
+							        .attr("opacity", 0.6);
+
+		groupOfLineHorizontal.selectAll("text")
+							.data(opponentsRatings)
+							.enter()
+							.append("text")
+							.text(function(d){
+								//return ratings[teamIndex] - d;
+								return Math.floor(d);
+							})
+							.attr("y", function(d,i){
+						            	return (50)+ 30*i;
+						            })
+							.attr("x", function(d){
+								return (ratings[teamIndex] + d)/2;
+							})
+							.attr("fill", "black");		        
+
+		groupOfLineVertical
+			        .append("line")
+		       		.attr("y1", this.borderOfCanvas+this.radiusOfCircles*4)
+		       		.attr("x1", function(){
+		            	return ratings[teamIndex];
+		            	console.log(ratings[teamIndex])
+		            })
+					.attr("x2", function(){
+		            	return ratings[teamIndex];
+		            })
+		            .attr("y2", 280)
+		            .attr("stroke-width", 3)
+			        .attr("stroke","dimgray")
+			        .attr("opacity", 0.6)
 		
+
 
 
 

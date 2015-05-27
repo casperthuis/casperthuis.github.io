@@ -159,7 +159,7 @@
     wMatrix = tournament.createWMatrix();
     sMatrix = tournament.createSMatrix();
     ratings = leastSquares(wMatrix,sMatrix);
-
+    console.log(ratings)
     //showRating(tournament.teamNames, ratings);
     
     opponents = tournament.listScoresInTable(tournament.teamName);
