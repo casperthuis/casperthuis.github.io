@@ -15,6 +15,7 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
       this.matchMatrix = dataMatrix;
       this.originalMatchMatrix = dataMatrix;
       this.numberOfRounds = dataMatrix[dataMatrix.length-1][6];
+      this.teamName = teamNames[0];
       //this.numberOfMatchesPerRound = dataMatrix.length/this.numberOfRounds;
       
 
@@ -132,14 +133,16 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
 
      this.newGameTable = function(canvas) {
 
-      var teamName = document.getElementById("tags").value;
+      this.teamName = document.getElementById("tags").value;
       // Check if the input is empty or contains a name that ins't a team
-      if(teamName === "" /*|| $.inArray(this.teamNames, teamName) === -1*/){
+      if(this.teamName === "" /*|| $.inArray(this.teamNames, teamName) === -1*/){
         alert('No team has been picked');
       }else{
       $("tr").remove(".gamesRow");
-        opponents = this.listScoresInTable(teamName);
-        canvas.updateCirclesColor(teamName, opponents);
+        opponents = this.listScoresInTable(this.teamName);
+        canvas.scaleLineOnTeamOpponents(this.teamNames.indexOf(this.teamName), opponents);
+        //canvas.drawMatchLine(this.teamNames.indexOf(this.teamName), opponents);
+        //canvas.updateCirclesColor(this.teamNames.indexOf(this.teamName), opponents);
       }
     }
 

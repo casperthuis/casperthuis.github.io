@@ -1,14 +1,15 @@
-function canvas(height,width,border, radius){
+function canvas(height,width,border, radius,ratings){
 	this.heightOfCanvas = height;
 	this.widthOfCanvas = width;
 	this.borderOfCanvas = border;
 	this.LineHeight = this.widthOfCanvas-border;
 	this.radiusOfCircles = radius;
 	this.colorSpectrum = d3.scale.category20();
+	this.currentRating = ratings;
 	this.canvas = d3.select("#window")
-								.append("svg")
-              					.attr("width", width)
-              					.attr("height", height);
+					.append("svg")
+              		.attr("width", width)
+              		.attr("height", height);
 
 
 	this.createLines = function(i){
@@ -97,10 +98,12 @@ function canvas(height,width,border, radius){
                             .call(xAxis);	
 	}
 
-	this.createRatingCircles = function(ratings, opponents,teamNames){
+	this.createRatingCircles = function(ratings, opponents,teamNames, teamName){
 
+		var teamIndex = teamNames.indexOf(teamName);
+		radius = this.radiusOfCircles;
 		colorSpectrum = d3.scale.category20();  
-
+		console.log(teamIndex)
 		var div = d3.select("body")
   					.append("div")  // declare the tooltip div 
   					.attr("class", "tooltip") // apply the 'tooltip' class
@@ -121,7 +124,7 @@ function canvas(height,width,border, radius){
   					.append("circle")
     					.attr("fill", function(d,i) 
     						{
-    							if(	$.inArray(i, opponents) != -1)
+    							if(	$.inArray(i, opponents) != -1 || i == teamIndex)
 									{	
 										return  colorSpectrum(i);} 
     							else 
@@ -131,14 +134,21 @@ function canvas(height,width,border, radius){
     					.attr("cy", (this.borderOfCanvas) + 20)
     					.attr("opacity",function(d,i) 
     						{
-    							if(	$.inArray(i, opponents) != -1)
+    							if(	$.inArray(i, opponents) != -1 || i == teamIndex)
 									{	
 										return  0.9;} 
     							else 
     								{ return 0.2;} 
     						})
     					.attr("cx", this.LineHeight/2)
-    					.attr("r", this.radiusOfCircles)
+    					.attr("r", function(d,i)
+						{
+							if(i == teamIndex){
+								return radius*2;
+							}else{
+								return radius;
+							}
+						})
 				    	.on("mouseover", function(d,i) {      
 				            div.transition()        
 				            .duration(200)      
@@ -194,6 +204,108 @@ function canvas(height,width,border, radius){
 	}
 
 
+	this.scaleLineOnTeamOpponents = function(teamIndex, opponents){
+		var ratings = this.currentRating;
+		console.log(ratings);
+
+		
+		var opponentsRatings = new Array();
+		for(var i = 0; i < opponents.length ;i++){
+			opponentsRatings[i] = ratings[opponents[i]];
+		}
+		console.log(opponentsRatings);
+
+		var linearScale = d3.scale.linear()
+                    .domain([d3.min(opponentsRatings), d3.max(opponentsRatings)])
+                    .range([this.radiusOfCircles*2, this.LineHeight-this.radiusOfCircles]);
+
+		for (var i = 0; i < ratings.length; i++) {
+  			ratings[i] = linearScale(ratings[i]);
+		}
+
+		radius = this.radiusOfCircles; 
+		colorSpectrum = d3.scale.category20();  
+		
+			group.selectAll("circle")
+				.data(ratings)
+				.transition()
+				.duration(1000)
+				.attr("cx", function(d){ return d})
+				.attr("fill", function(d,i) 
+    						{
+    							if(	$.inArray(i, opponents) != -1 || i == teamIndex)
+									{	
+										return  colorSpectrum(i);
+									} 
+    							else 
+    								{ return "dimgrey";} 
+    						})
+				.attr("opacity",function(d,i) 
+    						{
+    							if($.inArray(i, opponents) != -1 || i == teamIndex)
+									{	
+										return  0.9;} 
+    							else 
+    								{ return 0.2;} 
+    						})
+				.attr("r", function(d,i)
+					{
+						if(i == teamIndex){
+							return radius*2;
+						}else{
+							return radius;
+						}
+					});
+
+	}
+
+
+	this.drawMatchLine = function(teamIndex, opponents){
+		this.canvas = group.append("line")
+		var ratings = this.currentRating;
+		console.log(ratings);
+
+		
+		var opponentsRatings = new Array();
+
+		for(var i = 0; i < opponents.length ;i++){
+			opponentsRatings[i] = ratings[opponents[i]];
+		}
+		console.log(opponentsRatings);
+
+		var linearScale = d3.scale.linear()
+                    .domain([d3.min(opponentsRatings), d3.max(opponentsRatings)])
+                    .range([this.radiusOfCircles*2, this.LineHeight-this.radiusOfCircles]);
+
+		for (var i = 0; i < ratings.length; i++) {
+  			ratings[i] = linearScale(ratings[i]);
+		}
+
+		groupOfLine = group.append("g");
+
+		groupOfLine.selectAll("line")
+					.data(opponentsRatings)
+					.enter()
+					.append("line")
+					.attr("y1", this.borderOfCanvas)
+		            .attr("x1", function(d){
+		            	return d
+		            })
+		            .attr("x2", function(d){
+		            	return d
+		            })
+		            .attr("y2", 200)
+		            .attr("stroke-width", 3)
+			        .attr("stroke","dimgray");
+		       
+		
+
+
+
+	}
+
+
+
 
 	this.updateCircles = function(ratings){
     	
@@ -212,35 +324,45 @@ function canvas(height,width,border, radius){
               .transition()
               .duration(1000)
  			  .delay(1000)	
-              .attr("cx", function(d)  { return d });   
-		
+              .attr("cx", function(d)  { return d })
+              .attr("stroke-width", 3)
+			  .attr("stroke","dimgray");
               
 
 	}
 
-	this.updateCirclesColor = function(teamName, opponents){
-		
+	this.updateCirclesColor = function(teamIndex, opponents){
+		radius = this.radiusOfCircles; 
 		colorSpectrum = d3.scale.category20();  
-		console.log(opponents)
+		console.log(teamIndex)
 		group.selectAll("circle")
 				.transition()
 				.duration(1000)
 				.attr("fill", function(d,i) 
     						{
-    							if(	$.inArray(i, opponents) != -1)
+    							if(	$.inArray(i, opponents) != -1 || i == teamIndex)
 									{	
-										return  colorSpectrum(i);} 
+										return  colorSpectrum(i);
+									} 
     							else 
     								{ return "dimgrey";} 
     						})
 				.attr("opacity",function(d,i) 
     						{
-    							if(	$.inArray(i, opponents) != -1)
+    							if($.inArray(i, opponents) != -1 || i == teamIndex)
 									{	
 										return  0.9;} 
     							else 
     								{ return 0.2;} 
-    						});
+    						})
+				.attr("r", function(d,i)
+					{
+						if(i == teamIndex){
+							return radius*2;
+						}else{
+							return radius;
+						}
+					});
 	}
 
 	this.fullTournamentAnimation = function(tournament){

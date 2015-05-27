@@ -144,7 +144,7 @@
     // get  data and create a tourment object.
     tournament = readAPI();
     // Intialize a team for first round.
-    teamName = tournament.teamNames[0];
+
 
     // A function for autocompletion in searchfield 
     $(function() {
@@ -162,12 +162,13 @@
 
     //showRating(tournament.teamNames, ratings);
     
-    opponents = tournament.listScoresInTable(teamName);
+    opponents = tournament.listScoresInTable(tournament.teamName);
     
-    canvas = new canvas(300, 1500, 10, 10);
+    canvas = new canvas(300, 1500, 10, 10, ratings);
     canvas.createLines(0);
     canvas.createAxis(ratings)
-    canvas.createRatingCircles(ratings, opponents, tournament.teamNames)
+
+    canvas.createRatingCircles(ratings, opponents, tournament.teamNames, tournament.teamName)
 
    
     //wMatrixNew = tournament.createWMatrixWithRounds(1);
