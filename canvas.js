@@ -265,6 +265,8 @@ function canvas(height,width,border, radius,ratings){
 		var ratings = this.currentRating;
 		
 
+		console.log("niks");
+
 		ratingUnscaled = this.currentRating
 		console.log(ratingUnscaled)
 		var opponentsRatings = new Array();
