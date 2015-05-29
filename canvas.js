@@ -385,9 +385,7 @@ function canvas(height,width,border, radius,ratings){
               .transition()
               .duration(1000)
  			  .delay(1000)	
-              .attr("cx", function(d)  { return d })
-              .attr("stroke-width", 3)
-			  .attr("stroke","dimgray");
+              .attr("cx", function(d)  { return d });
               
 
 	}
