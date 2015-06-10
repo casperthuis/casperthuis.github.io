@@ -145,15 +145,30 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
         alert('No team has been picked');
       }else{
       $("tr").remove(".gamesRow");
+        var maxRound = this.obtainMaxRoundsOfTeam(this.teamIndex)
+        this.currentRound = maxRound; 
         var opponents = this.listScoresInTable(this.teamName);
         //canvas.scaleLineOnTeamOpponents(this.teamNames.indexOf(this.teamName), opponents);
-        var scoresDifference = this.obtainScoresDifference(this.teamIndex);
+        var scoresDifference = this.obtainScoresDifference(this.teamIndex, tournament.currentRound);
         
+       
         //canvas.drawMatchLines(this.teamIndex, opponents, scoresDifference);
-        canvas.updateCanvas(ratings, this.teamIndex, opponents, scoresDifference);
+        canvas.updateCanvas(ratings, this.teamIndex, opponents, scoresDifference, this.teamNames, this.ranks);
         //canvas.updateCirclesColor(this.teamIndex, opponents);
-        canvas.updateLegend(opponents, tournament.teamNames, tournament.TeamIndex, tournament.ranks);
+        
+        //canvas.updateLegend(opponents, this.teamNames, this.TeamIndex, this.ranks);
       }
+    }
+
+    this.obtainMaxRoundsOfTeam = function(teamIndex){
+      var roundNumbers = new Array();
+      for(var i= 0; i < this.matchMatrix.length; i++){
+        if(this.matchMatrix[i][1] == teamIndex || this.matchMatrix[i][2] == teamIndex){
+          roundNumbers[roundNumbers.length] = this.matchMatrix[i][6]; 
+        }
+      }
+      
+      return Math.max.apply(Math, roundNumbers);
     }
 
     this.obtainRankTeams = function(ratings){
@@ -164,7 +179,7 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
       return ranks;
     }
 
-    this.obtainScoresDifference = function(teamIndex){
+    this.obtainScoresDifference = function(teamIndex, roundNumber){
     
       var scoresDifference = new Array();
       for(var i = 0; i < this.matchMatrix.length; i++){
@@ -173,6 +188,9 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
         }else if(teamIndex == this.matchMatrix[i][2]){
           scoresDifference[scoresDifference.length] = this.matchMatrix[i][4] - this.matchMatrix[i][3];
         }
+        if(scoresDifference.length == roundNumber){
+            break;
+          }   
       }
       return scoresDifference
     }
@@ -206,7 +224,7 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
       }
 
 
-      this.getOpponents = function(teamIndex){
+      this.getOpponents = function(teamIndex, roundNumber){
         var opponents = new Array();
         for(var i = 0; i < this.matchMatrix.length; i++){
           if(this.matchMatrix[i][2] == this.teamIndex){
@@ -215,6 +233,9 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
           }else if(this.matchMatrix[i][1] == this.teamIndex){
            
             opponents[opponents.length] = this.matchMatrix[i][2];
+          }
+          if(opponents.length == roundNumber){
+            break;
           }   
         }
         return opponents
@@ -249,11 +270,11 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
       
         // Loops over all the games played by the team and adds them to the website.
         // It creates 7 cell per row and as many rows as there are matches.
-  
         
         for(var i = 0; i < this.currentRound;i++){
           // Get the game information of the gameplayed and put it in currentgame variable
           var currentGame = this.matchMatrix[gamesPlayedByTeam[i]];
+         
           // find table.
           var table = document.getElementById("gameTable");
           // add extra row
@@ -338,13 +359,18 @@ function createButton(score, element, gamePlayed, team, tournament){
         element.appendChild(scoreTeam);
         buttonplus.appendTo(element);
         buttonmin.appendTo(element);
-        wMatrix = tournament.createWMatrix();
-        sMatrix = tournament.createSMatrix();
-        newRatings = leastSquares(wMatrix, sMatrix);
-        var opponents = tournament.getOpponents(tournament.teamIndex);
-        var scoresDifference = tournament.obtainScoresDifference(tournament.teamIndex);
-        canvas.updateCanvas(newRatings, tournament.teamIndex, opponents, scoresDifference); 
-        //canvas.updateCirclesColor(this.teamIndex, opponents);
+        var wMatrix = tournament.createWMatrixWithRounds(tournament.currentRound);
+        var sMatrix = tournament.createSMatrixWithRounds(tournament.currentRound);
+      
+        var newRatings = leastSquares(wMatrix, sMatrix, tournament.currentRound);
+        canvas.currentRating = newRatings;
+        tournament.obtainRankTeams(newRatings);
+        canvas.currentRating = newRatings.slice();
+        
+        var opponents = tournament.getOpponents(tournament.teamIndex,tournament.currentRound);
+        var scoresDifference = tournament.obtainScoresDifference(tournament.teamIndex, tournament.currentRound);
+        canvas.updateCanvas(newRatings, tournament.teamIndex, opponents, scoresDifference, tournament.teamNames, tournament.ranks);
+        
   });
 
   // function for a minus button
@@ -357,13 +383,17 @@ function createButton(score, element, gamePlayed, team, tournament){
         element.appendChild(scoreTeam);
         buttonplus.appendTo(element);
         buttonmin.appendTo(element);
-        wMatrix = tournament.createWMatrix();
-        sMatrix = tournament.createSMatrix();
-        newRatings = leastSquares(wMatrix, sMatrix);
-        var opponents = tournament.getOpponents(tournament.teamIndex);
-        var scoresDifference = tournament.obtainScoresDifference(tournament.teamIndex);
-        canvas.updateCanvas(newRatings, tournament.teamIndex, opponents, scoresDifference); 
-        //canvas.updateCirclesColor(this.teamIndex, opponents);
+        tournament.currentRound
+        var wMatrix = tournament.createWMatrixWithRounds(tournament.currentRound);
+        var sMatrix = tournament.createSMatrixWithRounds(tournament.currentRound);
+        var newRatings = leastSquares(wMatrix, sMatrix, tournament.currentRound);
+        canvas.currentRating = newRatings;
+        tournament.obtainRankTeams(newRatings);
+        var opponents = tournament.getOpponents(tournament.teamIndex, tournament.currentRound);
+        canvas.currentRating = newRatings.slice();
+        var scoresDifference = tournament.obtainScoresDifference(tournament.teamIndex, tournament.currentRound);
+        canvas.updateCanvas(newRatings, tournament.teamIndex, opponents, scoresDifference, tournament.teamNames, tournament.ranks); 
+       
   });
 
   // Append the button function to the buttons

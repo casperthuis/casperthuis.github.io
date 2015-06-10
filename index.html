@@ -184,12 +184,12 @@
    
     var wMatrix = tournament.createWMatrix();
     var sMatrix = tournament.createSMatrix();
-    var ratings = leastSquares(wMatrix,sMatrix);
+    var ratings = leastSquares(wMatrix,sMatrix,tournament.roundNumber);
     
     //showRating(tournament.teamNames, ratings);
     
-    var opponents = tournament.listScoresInTable(tournament.teamName);
-   
+    tournament.listScoresInTable(tournament.teamName);
+    var opponents = tournament.getOpponents(tournament.teamIndex,tournament.currentRound);
     
     var canvas = new canvas(500, 1500, 10, 10, ratings);
       
@@ -201,7 +201,7 @@
     var ranks = tournament.obtainRankTeams(ratings);
     canvas.createLegend(opponents, tournament.teamNames, tournament.teamIndex, ranks);
 
-    var scoresDifference = tournament.obtainScoresDifference(tournament.teamNames.indexOf(tournament.teamName));
+    var scoresDifference = tournament.obtainScoresDifference(tournament.teamNames.indexOf(tournament.teamName), tournament.currentRound);
     
     canvas.drawMatchLines(tournament.teamNames.indexOf(tournament.teamName), opponents, scoresDifference)
    

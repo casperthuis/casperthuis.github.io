@@ -285,12 +285,13 @@ function canvas(height,width,border, radius,ratings){
 
 	this.updateLegend = function(opponents, teamNames, teamIndex, ranks){
 		
-		console.log(opponents)
+	
 
 		var players = opponents.slice();
   		players.push(teamIndex);
-
+  		
 		var colorSpectrum = this.colorSpectrum;
+		
 		legend.selectAll("circle")
 				.data(players)
 				.enter()
@@ -298,7 +299,7 @@ function canvas(height,width,border, radius,ratings){
 				.attr("cy", 0)
 				.attr("cx", function(d,i){
 
-					return (1500/9)*i;
+					return (1500/10)*i;
 				})
 				.attr("stroke", "black")
 				//.attr("cx", 10)
@@ -315,6 +316,26 @@ function canvas(height,width,border, radius,ratings){
 					}
 					return colorSpectrum[i];
 				})	
+
+		legend.selectAll("text")
+				.data(players)		
+				.enter()
+				.append("text")
+				.attr("y", 5)
+				.attr("opacity", 0)
+				.attr("x", function(d,i){
+					return 15+(1500/10)*i;
+				})
+				//.attr("x", 30)
+      			//.attr("y", function(d,i ){
+				//	var offset = 14+ 30*i
+				//	return  offset;
+				//})
+				.text(function(d,i){
+					
+					return teamNames[d] + "  : " +ranks[d];
+				});	
+
 
 		legend.selectAll("circle")
 				.data(players)
@@ -421,6 +442,7 @@ function canvas(height,width,border, radius,ratings){
 	this.calculatedScoreDifferenceInRating = function(teamIndex , scoresDifference){
 		var ratings = this.currentRating; 
 		var ratingsOfScores = new Array();
+		
 		for(var i = 0; i < scoresDifference.length; i++){
 		
 			ratingsOfScores[ratingsOfScores.length] =  ratings[teamIndex] - scoresDifference[i];
@@ -467,11 +489,11 @@ function canvas(height,width,border, radius,ratings){
 	}
 
 	this.calculatedError = function(ratingsOfScores, opponentsRatings, teamIndex){
+		var ratings = this.currentRating; 
 		var error = new Array();
 		for(var i = 0; i < ratingsOfScores.length; i++){
 			error[i] = ratingsOfScores[i] - opponentsRatings[i];
-			
-			error[i] = (ratings[teamIndex] - error[i]);
+			error[i] = ratings[teamIndex] - error[i];
 			
 		}
 		
@@ -686,8 +708,9 @@ function canvas(height,width,border, radius,ratings){
 
 
 
-	this.updateCanvas = function(ratings, teamIndex, opponents, scoresDifference){
+	this.updateCanvas = function(ratings, teamIndex, opponents, scoresDifference, teamNames, ranks){
 		/* Creating varaibles*/
+		var ratings = this.currentRating;
 		var min = d3.min(ratings);
 		var max = d3.max(ratings);
 		var opponentsRatings = new Array();
@@ -697,6 +720,7 @@ function canvas(height,width,border, radius,ratings){
 			opponentsRatings[i] = ratings[opponents[i]];
 		}
 		// Compute the  score difference and error in relative to the team that is picked 
+		
 		var ratingsOfScores = this.calculatedScoreDifferenceInRating(teamIndex, scoresDifference);
 		var errors = this.calculatedError(ratingsOfScores, opponentsRatings, teamIndex);
 
@@ -704,15 +728,16 @@ function canvas(height,width,border, radius,ratings){
 		var errorsScaled = this.scaleRatings(errors, max, min);
 		var ratingsScaled = this.scaleRatings(ratings, max, min);
 		var scoreDifferenceScaled = this.scaleRatings(ratingsOfScores, max, min);
-		
+			
 		// Create a array of the scale ratings of the opponents
 		for(var i = 0; i < opponents.length ;i++){
 			opponentsRatingsScaled[i] = ratingsScaled[opponents[i]];
 		}
 		// update the groups of the canvas
-		this.updateCirclesColor(ratingsScaled, teamIndex, opponents);
+		this.updateCircles(ratingsScaled, teamIndex, opponents);
 		this.updateVerticalLines(ratingsScaled, opponentsRatingsScaled, teamIndex);
 		this.updateHorizontalLines(opponentsRatingsScaled, scoreDifferenceScaled, errorsScaled,ratingsScaled, teamIndex);
+		this.updateLegend(opponents, teamNames, teamIndex, ranks);
 	}
 
 
@@ -915,7 +940,7 @@ function canvas(height,width,border, radius,ratings){
 
 
 
-	this.updateCirclesColor = function(ratingsScaled,teamIndex, opponents){
+	this.updateCircles = function(ratingsScaled,teamIndex, opponents){
 		var radius = this.radiusOfCircles; 
 		var colorSpectrum = this.colorSpectrum;
 		var players = opponents.slice();
@@ -1039,7 +1064,7 @@ function canvas(height,width,border, radius,ratings){
 	}
 
 	this.fullTournamentAnimation = function(tournament){
-		
+		var rating = currentRating;
 		var roundMatrix = new Array();
 		for(var i = 1; i < tournament.numberOfRounds+1; i++){
 			var wMatrix = tournament.createWMatrixWithRounds(i);

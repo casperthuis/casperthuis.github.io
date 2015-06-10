@@ -11,9 +11,11 @@ Input : wMatrix[matches][teams] Sparse matrix
         scores[matches][2]
 Output : rating[teams][1]
 */
-function leastSquares(wMatrix,scores){
+function leastSquares(wMatrix,scores,roundNumber){
         // calculate score difference
-       
+        if(roundNumber == 1){
+            return leastSquaresNoInterdependance(wMatrix, scores);
+        }       
         var scoresDifference = calculateScoreDifference(scores);
         
        

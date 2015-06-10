@@ -84,8 +84,7 @@ function readAPI(tournamentName){
             
             
             for(var i = 0; i < data.objects.length;i++){
-              //console.log(i);
-              //console.log(!data.objects[i].swiss_round_id);
+              
               if(!data.objects[i].swiss_round_id){
                 continue;
               }
@@ -98,7 +97,7 @@ function readAPI(tournamentName){
               var score2 = data.objects[i].team_2_score;
               /* CURRENT LOCATION DOENST WORK FOR UNKNOW REASONS */
               //location = //data.objects[i].game_site.event_site.name //+ ": " + data.objects[i].game_site.name;
-              //console.log(location = data.objects[i].game_site.name);
+              
               
               
               

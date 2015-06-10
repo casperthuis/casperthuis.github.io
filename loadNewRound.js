@@ -13,17 +13,17 @@ function loadNewRound(roundNumber, tournament, canvas){
 	}
 
 	
-	//tournament.listScoresInTable(tournament.teamName);
+	
 	tournament.currentRound = roundNumber;
 	tournament.listScoresInTable(tournament.teamName);
-    canvas.currentRating = ratings.splice();
-
-    var opponents = tournament.getOpponents(tournament.TeamIndex);
-    var scoresDifference = tournament.obtainScoresDifference(tournament.teamIndex);
-    //console.log(tournament.teamName)
-    //console.log(tournament.teamNames[tournament.teamIndex])
-    //canvas.updateCirclesColor(tournament.teamIndex, opponents);
-    canvas.updateCanvas(ratings, tournament.teamIndex, opponents, scoresDifference);
+    canvas.currentRating = ratings.slice();
+  
+    var opponents = tournament.getOpponents(tournament.TeamIndex, tournament.currentRound);
+    var scoresDifference = tournament.obtainScoresDifference(tournament.teamIndex, tournament.currentRound);
+    
+    
+    
+    canvas.updateCanvas(canvas.currentRating, tournament.teamIndex, opponents, scoresDifference, tournament.teamNames, tournament.ranks);
     
 
 }
