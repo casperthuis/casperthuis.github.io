@@ -16,6 +16,9 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
       this.originalMatchMatrix = dataMatrix;
       this.numberOfRounds = dataMatrix[dataMatrix.length-1][6];
       this.teamName = teamNames[0];
+      this.teamIndex = this.teamNames.indexOf(teamNames[0]);
+      this.ranks
+      this.currentRound = dataMatrix[dataMatrix.length-1][6];
       //this.numberOfMatchesPerRound = dataMatrix.length/this.numberOfRounds;
       
 
@@ -131,19 +134,47 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
         Output: None
       */
 
-     this.newGameTable = function(canvas) {
+     this.newGameTable = function(canvas, ratings) {
 
+      
       this.teamName = document.getElementById("tags").value;
+      this.teamIndex = this.teamNames.indexOf(this.teamName);
+      
       // Check if the input is empty or contains a name that ins't a team
       if(this.teamName === "" /*|| $.inArray(this.teamNames, teamName) === -1*/){
         alert('No team has been picked');
       }else{
       $("tr").remove(".gamesRow");
-        opponents = this.listScoresInTable(this.teamName);
-        canvas.scaleLineOnTeamOpponents(this.teamNames.indexOf(this.teamName), opponents);
-        canvas.drawMatchLine(this.teamNames.indexOf(this.teamName), opponents);
-        //canvas.updateCirclesColor(this.teamNames.indexOf(this.teamName), opponents);
+        var opponents = this.listScoresInTable(this.teamName);
+        //canvas.scaleLineOnTeamOpponents(this.teamNames.indexOf(this.teamName), opponents);
+        var scoresDifference = this.obtainScoresDifference(this.teamIndex);
+        
+        //canvas.drawMatchLines(this.teamIndex, opponents, scoresDifference);
+        canvas.updateCanvas(ratings, this.teamIndex, opponents, scoresDifference);
+        //canvas.updateCirclesColor(this.teamIndex, opponents);
+        canvas.updateLegend(opponents, tournament.teamNames, tournament.TeamIndex, tournament.ranks);
       }
+    }
+
+    this.obtainRankTeams = function(ratings){
+
+      var sorted = ratings.slice().sort(function(a,b){return b-a})
+      var ranks = ratings.slice().map(function(v){ return sorted.indexOf(v)+1 });
+      this.ranks = ranks;
+      return ranks;
+    }
+
+    this.obtainScoresDifference = function(teamIndex){
+    
+      var scoresDifference = new Array();
+      for(var i = 0; i < this.matchMatrix.length; i++){
+        if(teamIndex == this.matchMatrix[i][1]){
+          scoresDifference[scoresDifference.length] = this.matchMatrix[i][3] - this.matchMatrix[i][4];
+        }else if(teamIndex == this.matchMatrix[i][2]){
+          scoresDifference[scoresDifference.length] = this.matchMatrix[i][4] - this.matchMatrix[i][3];
+        }
+      }
+      return scoresDifference
     }
 
     /*
@@ -174,11 +205,28 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
           }
       }
 
+
+      this.getOpponents = function(teamIndex){
+        var opponents = new Array();
+        for(var i = 0; i < this.matchMatrix.length; i++){
+          if(this.matchMatrix[i][2] == this.teamIndex){
+            
+            opponents[opponents.length] = this.matchMatrix[i][1];
+          }else if(this.matchMatrix[i][1] == this.teamIndex){
+           
+            opponents[opponents.length] = this.matchMatrix[i][2];
+          }   
+        }
+        return opponents
+      }
+
+
       /*
         The listScoresInTable function list the scores in the table. It gets a teamName find the relevant information
         the table has this format
         table number, teamName1, teamName2, Score1, Score2, Location(currently Not working), Round 
       */
+
 
       this.listScoresInTable = function(teamName){
         // Get team number
@@ -188,7 +236,7 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
     
         // Create empty array for the matches that have been played by the team
         var gamesPlayedByTeam = new Array();
-        
+
         // Fill the array with matches of the team that it played. It loops over all the matches and checks whether 
         // the teams has played as team 1([i][1]) or as team2[i][2]. If that is the case add to the array
         for( var i = 0; i < this.matchMatrix.length;i++){
@@ -197,11 +245,13 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
           }
         }
 
+        $("tr").remove(".gamesRow");
       
         // Loops over all the games played by the team and adds them to the website.
         // It creates 7 cell per row and as many rows as there are matches.
   
-        for(var i = 0; i < gamesPlayedByTeam.length;i++){
+        
+        for(var i = 0; i < this.currentRound;i++){
           // Get the game information of the gameplayed and put it in currentgame variable
           var currentGame = this.matchMatrix[gamesPlayedByTeam[i]];
           // find table.
@@ -291,7 +341,10 @@ function createButton(score, element, gamePlayed, team, tournament){
         wMatrix = tournament.createWMatrix();
         sMatrix = tournament.createSMatrix();
         newRatings = leastSquares(wMatrix, sMatrix);
-        canvas.updateCircles(newRatings); 
+        var opponents = tournament.getOpponents(tournament.teamIndex);
+        var scoresDifference = tournament.obtainScoresDifference(tournament.teamIndex);
+        canvas.updateCanvas(newRatings, tournament.teamIndex, opponents, scoresDifference); 
+        //canvas.updateCirclesColor(this.teamIndex, opponents);
   });
 
   // function for a minus button
@@ -307,7 +360,10 @@ function createButton(score, element, gamePlayed, team, tournament){
         wMatrix = tournament.createWMatrix();
         sMatrix = tournament.createSMatrix();
         newRatings = leastSquares(wMatrix, sMatrix);
-        canvas.updateCircles(newRatings); 
+        var opponents = tournament.getOpponents(tournament.teamIndex);
+        var scoresDifference = tournament.obtainScoresDifference(tournament.teamIndex);
+        canvas.updateCanvas(newRatings, tournament.teamIndex, opponents, scoresDifference); 
+        //canvas.updateCirclesColor(this.teamIndex, opponents);
   });
 
   // Append the button function to the buttons

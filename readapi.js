@@ -5,10 +5,23 @@
 	After which a tournament object is returned.	
 
 */
-function readAPI(){
+function readAPI(tournamentName){
 		
+
+    var tournamentIdArray =[
+    ["Women2013", "Mixed2013", "Open2013", "Women2012","Mixed2012", "Open2012"], 
+    [19177,19178,19176,18094,18093,18091]
+    ];
+
+    var index = tournamentIdArray[0].indexOf(tournamentName);
+    var tournamentId = tournamentIdArray[1][index];
+    
 		// Create Stream to read in files.
 		$.ajax({
+
+      url: "https://api.leaguevine.com/v1/games/?tournament_id="+tournamentId+"&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+        
+
         //url: "data/apifilewithbugs.json",
         // Women 2013 windmill
         //url: "https://api.leaguevine.com/v1/games/?tournament_id=19177&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
@@ -18,9 +31,9 @@ function readAPI(){
         
         // Open 2013 windmill
         //url: "https://api.leaguevine.com/v1/games/?tournament_id=19176&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
-         url: "data/windmillWindUp2013Open.json",
+        // url: "data/windmillWindUp2013Open.json",
         // Women 2012 windmill
-        //url: "https://api.leaguevine.com/v1/games/?tournament_id=18094&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+        // url: "https://api.leaguevine.com/v1/games/?tournament_id=18094&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
         
         // Mixed 2012 windmill
         //url: "https://api.leaguevine.com/v1/games/?tournament_id=18093&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
