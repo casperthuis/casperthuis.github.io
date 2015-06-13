@@ -10,7 +10,7 @@ function readAPI(tournamentName){
 
     var tournamentIdArray =[
     ["Women2013", "Mixed2013", "Open2013", "Women2012","Mixed2012", "Open2012", "Women2015" ,"Mixed2015" ,"Open2015"], 
-    [19177,19178,19176,18094,18093,18091,19746,19747,19750,19746]
+    [19177,19178,19176,18094,18093,18091,19746,19750,19746,19747]
     ];
 
 
@@ -20,8 +20,8 @@ function readAPI(tournamentName){
     
 		// Create Stream to read in files.
 		$.ajax({
-      url: "https://api.leaguevine.com/v1/games/?tournament_id=19746&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
-      //url: "https://api.leaguevine.com/v1/games/?tournament_id="+tournamentId+"&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+      //url: "https://api.leaguevine.com/v1/games/?tournament_id=19746&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+      url: "https://api.leaguevine.com/v1/games/?tournament_id="+tournamentId+"&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
         
 
         //url: "data/apifilewithbugs.json",
@@ -118,10 +118,10 @@ function readAPI(tournamentName){
              
             }
               
-              console.log(dataMatrix)
+              //console.log(dataMatrix)
         }
     });
-    
+    console.log(tournamentName)
 		var tournament = new tournamentObject(dataMatrix,teamNames,tournamentName);
         tournament.currentRound = tournament.obtainMaxRoundsOfTeam(tournament.teamIndex)
     return tournament;
