@@ -1,7 +1,7 @@
 function loadTournament(tournamentName, tournament, canvas){
 	
 	tournament = readAPI(tournamentName);
-	
+	console.log(tournament)
 	var wMatrix = tournament.createWMatrix();
     var sMatrix = tournament.createSMatrix();
     var ratings = leastSquares(wMatrix,sMatrix);
@@ -18,5 +18,11 @@ function loadTournament(tournamentName, tournament, canvas){
     canvas.updateCanvas(canvas.currentRating, tournament.teamIndex, opponents, scoresDifference, tournament.teamNames, tournament.ranks);
     //canvas.updateCirclesColor(tournament.teamIndex, opponents);
     //canvas.updateLegend(opponents, tournament.teamNames, tournament.TeamIndex, tournament.ranks);
+    $( "#tags" ).autocomplete({
+      source: tournament.teamNames
+      });
     
+
+    
+    //document.getElementById("pickTeamButton").setAttribute('onclick','tournament.newGameTable(canvas, canvas.currentRating)');
 }
