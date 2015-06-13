@@ -192,8 +192,9 @@
     var ratings = leastSquares(wMatrix,sMatrix,tournament.roundNumber);
     
     //showRating(tournament.teamNames, ratings);
-    
+    console.log("1")
     tournament.listScoresInTable(tournament.teamName);
+    console.log("1")
     var opponents = tournament.getOpponents(tournament.teamIndex,tournament.currentRound);
     
     var canvas = new canvas(500, 1500, 10, 10, ratings);

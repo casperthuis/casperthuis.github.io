@@ -272,6 +272,9 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
         // Loops over all the games played by the team and adds them to the website.
         // It creates 7 cell per row and as many rows as there are matches.
         
+        console.log(gamesPlayedByTeam)
+        //console.log(this.matchMatrix[gamesPlayedByTeam[i]]);
+        console.log(this.currentRound)
         for(var i = 0; i < this.currentRound;i++){
           // Get the game information of the gameplayed and put it in currentgame variable
           var currentGame = this.matchMatrix[gamesPlayedByTeam[i]];
