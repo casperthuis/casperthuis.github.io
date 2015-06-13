@@ -131,7 +131,7 @@
           <form id="inputTeamName" class="col-sm-4">
             <input id="tags" type="text" class="form-control" placeholder="Pick a team...">
           </form>
-          <button id="pickTeamButton" onclick="tournament.newGameTable(canvas, ratings)" class="col-sm-1" class="btn btn-primary btn-sm"> Pick Team  <span class=' glyphicon glyphicon-refresh'></span></button>
+          <button id="pickTeamButton" onclick="teamPicked()" class="col-sm-1" class="btn btn-primary btn-sm"> Pick Team  <span class=' glyphicon glyphicon-refresh'></span></button>
           <div class="ui-widget">
           </div>
           <div class="col-sm-12">
@@ -166,12 +166,13 @@
     
     
     function teamPicked(){
-
+      console.log(tournament)
+      tournament.newGameTable(canvas)
     }
 
     //listScores(teamNames, wMatrix, scores, teamName);
     // get  data and create a tourment object.
-    tournament = readAPI("Women2012");
+    tournament = readAPI("Open2015");
     // Intialize a team for first round.
 
 

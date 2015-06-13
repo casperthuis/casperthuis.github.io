@@ -133,9 +133,10 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
         function to make a new one. It also checks whether the input 
         Input: None
         Output: None
+        RATING NEED TO BE COMPUTED AGAIN!!!
       */
 
-     this.newGameTable = function(canvas, ratings) {
+     this.newGameTable = function(canvas) {
       console.log(this)
       
       this.teamName = document.getElementById("tags").value;
@@ -255,7 +256,7 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
         // Create array that contains the oponents of the current team
         var allTeamsThatPlayed = new Array();
         var index = this.teamNames.indexOf(teamName);
-    
+         
         // Create empty array for the matches that have been played by the team
         var gamesPlayedByTeam = new Array();
 
