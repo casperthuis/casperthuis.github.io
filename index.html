@@ -85,6 +85,9 @@
                 <li><a onclick = "loadTournament('Women2012' , tournament, canvas)" href="#">Women 2012 windmill</a></li>
                 <li><a onclick = "loadTournament('Mixed2012' , tournament, canvas)" href="#">Mixed 2012 windmill</a></li>
                 <li><a onclick = "loadTournament('Open2012' , tournament, canvas)" href="#">Open 2012 windmill</a></li>
+                <li><a onclick = "loadTournament('Women2015' , tournament, canvas)" href="#">Women 2015 windmill</a></li>
+                <li><a onclick = "loadTournament('Mixed2015' , tournament, canvas)" href="#">Mixed 2015 windmill</a></li>
+                <li><a onclick = "loadTournament('Open2015' , tournament, canvas)" href="#">Open 2015 windmill</a></li>
               </ul>
 
             </div>
@@ -128,7 +131,7 @@
           <form id="inputTeamName" class="col-sm-4">
             <input id="tags" type="text" class="form-control" placeholder="Pick a team...">
           </form>
-          <button onclick="tournament.newGameTable(canvas, ratings)" class="col-sm-1" class="btn btn-primary btn-sm"> Pick Team  <span class=' glyphicon glyphicon-refresh'></span></button>
+          <button id="pickTeamButton" onclick="tournament.newGameTable(canvas, ratings)" class="col-sm-1" class="btn btn-primary btn-sm"> Pick Team  <span class=' glyphicon glyphicon-refresh'></span></button>
           <div class="ui-widget">
           </div>
           <div class="col-sm-12">
@@ -162,7 +165,9 @@
     
     
     
-    
+    function teamPicked(){
+
+    }
 
     //listScores(teamNames, wMatrix, scores, teamName);
     // get  data and create a tourment object.
@@ -172,7 +177,7 @@
 
     // A function for autocompletion in searchfield 
     $(function() {
-      var availableTags = tournament.teamNames;
+      availableTags = tournament.teamNames;
       $( "#tags" ).autocomplete({
       source: availableTags
       });

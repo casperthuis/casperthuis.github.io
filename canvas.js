@@ -14,7 +14,9 @@ function canvas(height,width,border, radius,ratings){
     this.spacingOfLines = height/10;          		
     this.duration = 1000;
     this.delay = 1000;
-
+    this.errors
+    this.scores
+    this.opponentsRatings
 	this.createLines = function(i){
 		
 
@@ -116,7 +118,7 @@ function canvas(height,width,border, radius,ratings){
   		var scale = this.scaleRatings(ratings, min, max);
 
   		var players = opponents.slice();
-  		players.push(teamIndex);
+  		players.unshift(teamIndex);
   		
 		circles = group.selectAll("circle")
     				.data(scale)
@@ -218,8 +220,8 @@ function canvas(height,width,border, radius,ratings){
 		var colorSpectrum = this.colorSpectrum;
 
 		var players = opponents.slice();
-  		players.push(teamIndex);
-
+  		players.unshift(teamIndex);
+  		console.log(players)
 		legend = this.canvas
 					.append("g")
 					.attr("class", "legend")
@@ -257,9 +259,7 @@ function canvas(height,width,border, radius,ratings){
 				//})
 				.attr("r", 8)
 				.attr("fill", function(d,i){
-					if(i == teamIndex){
-						return colorSpectrum[colorSpectrum.length-1]
-					}
+
 					return colorSpectrum[i];
 				})	
 
@@ -288,7 +288,7 @@ function canvas(height,width,border, radius,ratings){
 	
 
 		var players = opponents.slice();
-  		players.push(teamIndex);
+  		players.unshift(teamIndex);
   		
 		var colorSpectrum = this.colorSpectrum;
 		
@@ -311,9 +311,6 @@ function canvas(height,width,border, radius,ratings){
 				//})
 				.attr("r", 8)
 				.attr("fill", function(d,i){
-					if(i == teamIndex){
-						return colorSpectrum[colorSpectrum.length-1]
-					}
 					return colorSpectrum[i];
 				})	
 
@@ -462,10 +459,11 @@ function canvas(height,width,border, radius,ratings){
 			opponentsRatings[i] = ratings[opponents[i]];
 		}
 
+		this.opponentsRatings = opponentsRatings;
 		var ratingsOfScores = this.calculatedScoreDifferenceInRating(teamIndex, scoresDifference);
-
+		this.scores = ratingsOfScores;
 		var errors = this.calculatedError(ratingsOfScores, opponentsRatings,teamIndex);
-		
+		this.errors = errors;
 		var ratingsScaled = this.scaleRatings(ratings, min, max);
 		
 		for(var i = 0; i < opponents.length ;i++){
@@ -502,11 +500,15 @@ function canvas(height,width,border, radius,ratings){
 
 	this.drawErrorLines = function(ratingsScaled, teamIndex, errorsScaled, errors){
 		
+		var scores = this.scores;
 		var spacingOfLines = this.spacingOfLines;
-	
+		var ratings = this.currentRating;
 		groupOfLineHorizontalError = this.canvas.append("g")  
-
 		
+		var div = d3.select("body")
+  					.append("div")  // declare the tooltip div 
+  					.attr("class", "tooltip") // apply the 'tooltip' class
+  					.style("opacity", 0); 		
 
 		groupOfLineHorizontalError.selectAll("line")
 									.data(errorsScaled)
@@ -523,12 +525,29 @@ function canvas(height,width,border, radius,ratings){
 						            .attr("y2", function(d,i){
 						            	return (spacingOfLines*2+10)+ spacingOfLines*i;
 						            })
+						            .on("mouseover", function(d,i) {      
+				            			div.transition()        
+							            .duration(200)      
+							            .style("opacity", .9);      
+							            div .html("Error: " + Math.round(errors[i]) + "\n Score: " + Math.round(scores[i]) + "\n Rating: " + Math.round(ratings[i]))  
+							            .style("left", (d3.event.pageX) + "px")     
+							            .style("top", (d3.event.pageY ) + "px");    
+							        	
+							        	})
+							    	.on("mouseout", function(d,i) {
+								        
+								        div.transition()
+								        .duration(500)
+								        .style("opacity", 0);
+								        
+							    	})
 									.transition()
 									.duration(this.duration)
 									.delay(this.delay*3)
 									.attr("x2", function(d){
 						            	return d;
 						            });
+
 						            
 						            
 									/*
@@ -552,6 +571,15 @@ function canvas(height,width,border, radius,ratings){
 
 	this.DrawScoreDifferenceLines = function(scoreDifferenceScaled,ratingsScaled, teamIndex, scoresDifference){
 		var spacingOfLines = this.spacingOfLines;
+		var scores = this.scores
+		var errors = this.errors
+		var spacingOfLines = this.spacingOfLines;
+		var ratings = this.currentRating;
+		var div = d3.select("body")
+  					.append("div")  // declare the tooltip div 
+  					.attr("class", "tooltip") // apply the 'tooltip' class
+  					.style("opacity", 0); 
+
 		groupOfLineHorizontalScores = this.canvas.append("g")  
 
 		groupOfLineHorizontalScores.selectAll("line")
@@ -569,6 +597,22 @@ function canvas(height,width,border, radius,ratings){
 						            .attr("stroke-width", 5)
 							        .attr("stroke","red")
 							        .attr("opacity", 0.4)
+							        .on("mouseover", function(d,i) {      
+				            			div.transition()        
+							            .duration(200)      
+							            .style("opacity", .9);      
+							            div .html("Error: " + Math.round(errors[i]) + "\n Score: " + Math.round(scores[i]) + "\n Rating: " + Math.round(ratings[i]))  
+							            .style("left", (d3.event.pageX) + "px")     
+							            .style("top", (d3.event.pageY ) + "px");    
+							        	
+							        	})
+							    	.on("mouseout", function(d,i) {
+								        
+								        div.transition()
+								        .duration(500)
+								        .style("opacity", 0);
+								        
+							    	})
 							        .transition()
 									.duration(this.duration)
 									.delay(this.delay*3)
@@ -597,6 +641,14 @@ function canvas(height,width,border, radius,ratings){
  
 	this.DrawRatingDifferenceLines = function(opponentsRatingsScaled,ratingsScaled, teamIndex, opponentsRatings){
 		var spacingOfLines = this.spacingOfLines;
+		var errors = this.errors
+		var spacingOfLines = this.spacingOfLines;
+		var scores = this.scores
+		var ratings = this.currentRating;
+		var div = d3.select("body")
+  					.append("div")  // declare the tooltip div 
+  					.attr("class", "tooltip") // apply the 'tooltip' class
+  					.style("opacity", 0); 
 		groupOfLineHorizontalRating = this.canvas.append("g")  
 
 		groupOfLineHorizontalRating.selectAll("line")
@@ -615,6 +667,22 @@ function canvas(height,width,border, radius,ratings){
 						            .attr("stroke-width", 5)
 							        .attr("stroke","green")
 							        .attr("opacity", 0.4)
+							        .on("mouseover", function(d,i) {      
+				            			div.transition()        
+							            .duration(200)      
+							            .style("opacity", .9);      
+							            div .html("Error: " + Math.round(errors[i]) + "\n Score: " + Math.round(scores[i]) + "\n Rating: " + Math.round(ratings[i]))  
+							            .style("left", (d3.event.pageX) + "px")     
+							            .style("top", (d3.event.pageY ) + "px");    
+							        	
+							        	})
+							    	.on("mouseout", function(d,i) {
+								        
+								        div.transition()
+								        .duration(500)
+								        .style("opacity", 0);
+								        
+							    	})
 							        .transition()
 									.duration(this.duration)
 									.delay(this.delay*3)
@@ -950,7 +1018,7 @@ function canvas(height,width,border, radius,ratings){
   					.attr("class", "tooltip") // apply the 'tooltip' class
   					.style("opacity", 0); 
 
-  		players.push(teamIndex);
+  		players.unshift(teamIndex);
 
 
 
@@ -963,10 +1031,8 @@ function canvas(height,width,border, radius,ratings){
     							if(	$.inArray(i, players) != -1)
 									{	
 										var position = players.indexOf(i)
-										return  colorSpectrum[position];}
-								else if( i == teamIndex){
-									return colorSpectrum[colorSpectrum.length-1]
-								}		 
+										return  colorSpectrum[position];
+									}	 
     							else 
     								{ return "dimgrey";} 
     						})

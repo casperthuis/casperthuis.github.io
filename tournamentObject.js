@@ -19,6 +19,7 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
       this.teamIndex = this.teamNames.indexOf(teamNames[0]);
       this.ranks
       this.currentRound = dataMatrix[dataMatrix.length-1][6];
+
       //this.numberOfMatchesPerRound = dataMatrix.length/this.numberOfRounds;
       
 
@@ -135,7 +136,7 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
       */
 
      this.newGameTable = function(canvas, ratings) {
-
+      console.log(this)
       
       this.teamName = document.getElementById("tags").value;
       this.teamIndex = this.teamNames.indexOf(this.teamName);
@@ -341,6 +342,9 @@ function tournamentObject(dataMatrix, teamNames, tournamentName){
   Input: Score, Element(in table), gamePlayed(game infomation), team
   Output: None
 */
+
+
+
 function createButton(score, element, gamePlayed, team, tournament){
   // Create Html elements
   var buttonplus = $("<button> + </button>");
@@ -363,6 +367,7 @@ function createButton(score, element, gamePlayed, team, tournament){
         var sMatrix = tournament.createSMatrixWithRounds(tournament.currentRound);
       
         var newRatings = leastSquares(wMatrix, sMatrix, tournament.currentRound);
+        console.log(newRatings)
         canvas.currentRating = newRatings;
         tournament.obtainRankTeams(newRatings);
         canvas.currentRating = newRatings.slice();
@@ -387,6 +392,7 @@ function createButton(score, element, gamePlayed, team, tournament){
         var wMatrix = tournament.createWMatrixWithRounds(tournament.currentRound);
         var sMatrix = tournament.createSMatrixWithRounds(tournament.currentRound);
         var newRatings = leastSquares(wMatrix, sMatrix, tournament.currentRound);
+        console.log(newRatings)
         canvas.currentRating = newRatings;
         tournament.obtainRankTeams(newRatings);
         var opponents = tournament.getOpponents(tournament.teamIndex, tournament.currentRound);

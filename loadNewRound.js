@@ -17,7 +17,7 @@ function loadNewRound(roundNumber, tournament, canvas){
 	tournament.currentRound = roundNumber;
 	tournament.listScoresInTable(tournament.teamName);
     canvas.currentRating = ratings.slice();
-  
+  	availableTags = tournament.teamNames;
     var opponents = tournament.getOpponents(tournament.TeamIndex, tournament.currentRound);
     var scoresDifference = tournament.obtainScoresDifference(tournament.teamIndex, tournament.currentRound);
     
@@ -25,5 +25,5 @@ function loadNewRound(roundNumber, tournament, canvas){
     
     canvas.updateCanvas(canvas.currentRating, tournament.teamIndex, opponents, scoresDifference, tournament.teamNames, tournament.ranks);
     
-
+   
 }
