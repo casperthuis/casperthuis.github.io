@@ -221,7 +221,7 @@ function canvas(height,width,border, radius,ratings){
 
 		var players = opponents.slice();
   		players.unshift(teamIndex);
-  		console.log(players)
+  		
 		legend = this.canvas
 					.append("g")
 					.attr("class", "legend")
@@ -482,7 +482,7 @@ function canvas(height,width,border, radius,ratings){
 		
 		this.DrawScoreDifferenceLines(scoreDifferenceScaled,ratingsScaled, teamIndex, scoresDifference)        
 
-		this.drawErrorLines(ratingsScaled, teamIndex, errorsScaled, errors)
+		this.drawErrorLines(ratingsScaled, teamIndex, errorsScaled, errors, scoreDifferenceScaled, opponentsRatingsScaled)
 		
 	}
 
@@ -498,7 +498,7 @@ function canvas(height,width,border, radius,ratings){
 		return error;
 	}
 
-	this.drawErrorLines = function(ratingsScaled, teamIndex, errorsScaled, errors){
+	this.drawErrorLines = function(ratingsScaled, teamIndex, errorsScaled, errors, scoreDifferenceScaled,opponentsRatingsScaled){
 		
 		var scores = this.scores;
 		var spacingOfLines = this.spacingOfLines;
@@ -507,24 +507,108 @@ function canvas(height,width,border, radius,ratings){
 		
 		var div = d3.select("body")
   					.append("div")  // declare the tooltip div 
-  					.attr("class", "tooltip") // apply the 'tooltip' class
+  					.attr("class", "tooltiplines") // apply the 'tooltip' class
   					.style("opacity", 0); 		
+  		var errorsScaled =	new Array();
+ 		var postionArray = new Array();			
+  		for(var i = 0; i < scoreDifferenceScaled.length ;i++){
+  			if(opponentsRatingsScaled[i] < ratingsScaled[teamIndex] && opponentsRatingsScaled[i] < scoreDifferenceScaled[i] && scoreDifferenceScaled[i] < ratingsScaled[teamIndex]){
+  				errorsScaled[i] = opponentsRatingsScaled[i];
+  				postionArray[i] = 1; 
+  			}else if(opponentsRatingsScaled[i] < ratingsScaled[teamIndex] && opponentsRatingsScaled[i] > scoreDifferenceScaled[i]){
+  				errorsScaled[i] = scoreDifferenceScaled[i];
+  				postionArray[i] = 2;
+  			}else if(opponentsRatingsScaled[i] < ratingsScaled[teamIndex] && scoreDifferenceScaled[i] > ratingsScaled[teamIndex]){
+  				errorsScaled[i] = opponentsRatingsScaled[i];
+  				postionArray[i] = 3;
+  			}else if(opponentsRatingsScaled[i] > ratingsScaled[teamIndex] && opponentsRatingsScaled[i] < scoreDifferenceScaled[i]){
+  				errorsScaled[i] = scoreDifferenceScaled[i];
+  				postionArray[i] = 4;
+  			}else if(opponentsRatingsScaled[i] > ratingsScaled[teamIndex] && opponentsRatingsScaled[i] > scoreDifferenceScaled[i] && scoreDifferenceScaled[i] > ratingsScaled[i]){
+				errorsScaled[i] = opponentsRatingsScaled[i];
+  				postionArray[i] = 5;
+  			}else if(opponentsRatingsScaled[i] > ratingsScaled[teamIndex] && scoreDifferenceScaled[i] < ratingsScaled[teamIndex]){
+  				errorsScaled[i] = scoreDifferenceScaled[i];
+  				postionArray[i] = 6;
+  			}
+  		}
 
+  		
+  		console.log(postionArray)
 		groupOfLineHorizontalError.selectAll("line")
 									.data(errorsScaled)
 									.enter()
 									.append("line")
-									.attr("x1", ratingsScaled[teamIndex])
+									.attr("x1",function(d,i){
+											if(postionArray[i] == 1){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 2){
+												return opponentsRatingsScaled[i];
+											}else if(postionArray[i] == 3){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 4){
+												return opponentsRatingsScaled[i];
+											}else if(postionArray[i] == 5){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 6){
+												return opponentsRatingsScaled[i];
+											}
+										}) 
+									.attr("x2",function(d,i){
+											if(postionArray[i] == 1){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 2){
+												return opponentsRatingsScaled[i];
+											}else if(postionArray[i] == 3){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 4){
+												return opponentsRatingsScaled[i];
+											}else if(postionArray[i] == 5){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 6){
+												return opponentsRatingsScaled[i];
+											}
+										})  
 									.attr("y1", function(d,i){
-										return (spacingOfLines*2+10)+ spacingOfLines*i;
+										
+										if(postionArray[i] == 1){
+											return (spacingOfLines*2+5)+ spacingOfLines*i;
+										}else if(postionArray[i] == 2){
+											return (spacingOfLines*2)+ spacingOfLines*i;
+										}else if(postionArray[i] == 3){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}else if(postionArray[i] == 4){
+											return (spacingOfLines*2)+ spacingOfLines*i; 
+										}else if(postionArray[i] == 5){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}else if(postionArray[i] == 6){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}
+										
+									})
+									.attr("y2", function(d,i){
+										
+										if(postionArray[i] == 1){
+											return (spacingOfLines*2+5)+ spacingOfLines*i;
+										}else if(postionArray[i] == 2){
+											return (spacingOfLines*2)+ spacingOfLines*i;
+										}else if(postionArray[i] == 3){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}else if(postionArray[i] == 4){
+											return (spacingOfLines*2)+ spacingOfLines*i; 
+										}else if(postionArray[i] == 5){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}else if(postionArray[i] == 6){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}
+										
 									})
 									.attr("stroke-width", 5)
 							        .attr("stroke","blue")
 							        .attr("opacity", 0.4)
-							        .attr("x2", ratingsScaled[teamIndex])
-						            .attr("y2", function(d,i){
-						            	return (spacingOfLines*2+10)+ spacingOfLines*i;
-						            })
+							        
+							        	//ratingsScaled[teamIndex])
+						            
 						            .on("mouseover", function(d,i) {      
 				            			div.transition()        
 							            .duration(200)      
@@ -577,7 +661,7 @@ function canvas(height,width,border, radius,ratings){
 		var ratings = this.currentRating;
 		var div = d3.select("body")
   					.append("div")  // declare the tooltip div 
-  					.attr("class", "tooltip") // apply the 'tooltip' class
+  					.attr("class", "tooltiplines") // apply the 'tooltip' class
   					.style("opacity", 0); 
 
 		groupOfLineHorizontalScores = this.canvas.append("g")  
@@ -647,7 +731,7 @@ function canvas(height,width,border, radius,ratings){
 		var ratings = this.currentRating;
 		var div = d3.select("body")
   					.append("div")  // declare the tooltip div 
-  					.attr("class", "tooltip") // apply the 'tooltip' class
+  					.attr("class", "tooltiplines") // apply the 'tooltip' class
   					.style("opacity", 0); 
 		groupOfLineHorizontalRating = this.canvas.append("g")  
 
@@ -886,6 +970,34 @@ function canvas(height,width,border, radius,ratings){
 
 	this.updateHorizontalLines = function(opponentsRatingsScaled, scoreDifferenceScaled, errorsScaled,ratingsScaled, teamIndex){
 		
+
+		var errorsScaled =	new Array();
+ 		var postionArray = new Array();			
+  		var errorsScaled =	new Array();
+ 		var postionArray = new Array();			
+  		for(var i = 0; i < scoreDifferenceScaled.length ;i++){
+  			if(opponentsRatingsScaled[i] < ratingsScaled[teamIndex] && opponentsRatingsScaled[i] < scoreDifferenceScaled[i] && scoreDifferenceScaled[i] < ratingsScaled[teamIndex]){
+  				errorsScaled[i] = opponentsRatingsScaled[i];
+  				postionArray[i] = 1; 
+  			}else if(opponentsRatingsScaled[i] < ratingsScaled[teamIndex] && opponentsRatingsScaled[i] > scoreDifferenceScaled[i]){
+  				errorsScaled[i] = scoreDifferenceScaled[i];
+  				postionArray[i] = 2;
+  			}else if(opponentsRatingsScaled[i] < ratingsScaled[teamIndex] && scoreDifferenceScaled[i] > ratingsScaled[teamIndex]){
+  				errorsScaled[i] = opponentsRatingsScaled[i];
+  				postionArray[i] = 3;
+  			}else if(opponentsRatingsScaled[i] > ratingsScaled[teamIndex] && opponentsRatingsScaled[i] < scoreDifferenceScaled[i]){
+  				errorsScaled[i] = scoreDifferenceScaled[i];
+  				postionArray[i] = 4;
+  			}else if(opponentsRatingsScaled[i] > ratingsScaled[teamIndex] && opponentsRatingsScaled[i] > scoreDifferenceScaled[i] && scoreDifferenceScaled[i] > ratingsScaled[i]){
+				errorsScaled[i] = opponentsRatingsScaled[i];
+  				postionArray[i] = 5;
+  			}else if(opponentsRatingsScaled[i] > ratingsScaled[teamIndex] && scoreDifferenceScaled[i] < ratingsScaled[teamIndex]){
+  				errorsScaled[i] = scoreDifferenceScaled[i];
+  				postionArray[i] = 6;
+  			}
+  		}
+  		console.log(postionArray)
+
 		var spacingOfLines = this.spacingOfLines;
 
 		groupOfLineHorizontalScores.selectAll("line")
@@ -937,17 +1049,74 @@ function canvas(height,width,border, radius,ratings){
 									.data(errorsScaled)
 									.enter()
 									.append("line")
-									.attr("x1", ratingsScaled[teamIndex])
+									.attr("x1",function(d,i){
+											if(postionArray[i] == 1){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 2){
+												return opponentsRatingsScaled[i];
+											}else if(postionArray[i] == 3){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 4){
+												return opponentsRatingsScaled[i];
+											}else if(postionArray[i] == 5){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 6){
+												return opponentsRatingsScaled[i];
+											}
+										}) 
+									.attr("x2",function(d,i){
+											if(postionArray[i] == 1){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 2){
+												return opponentsRatingsScaled[i];
+											}else if(postionArray[i] == 3){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 4){
+												return opponentsRatingsScaled[i];
+											}else if(postionArray[i] == 5){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 6){
+												return opponentsRatingsScaled[i];
+											}
+										})  
 									.attr("y1", function(d,i){
-										return (spacingOfLines*2+10)+ spacingOfLines*i;
+										
+										if(postionArray[i] == 1){
+											return (spacingOfLines*2+5)+ spacingOfLines*i;
+										}else if(postionArray[i] == 2){
+											return (spacingOfLines*2)+ spacingOfLines*i;
+										}else if(postionArray[i] == 3){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}else if(postionArray[i] == 4){
+											return (spacingOfLines*2)+ spacingOfLines*i; 
+										}else if(postionArray[i] == 5){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}else if(postionArray[i] == 6){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}
+										
 									})
+									.attr("y2", function(d,i){
+										
+										if(postionArray[i] == 1){
+											return (spacingOfLines*2+5)+ spacingOfLines*i;
+										}else if(postionArray[i] == 2){
+											return (spacingOfLines*2)+ spacingOfLines*i;
+										}else if(postionArray[i] == 3){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}else if(postionArray[i] == 4){
+											return (spacingOfLines*2)+ spacingOfLines*i; 
+										}else if(postionArray[i] == 5){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}else if(postionArray[i] == 6){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}
+										
+									})
+									
 									.attr("stroke-width", 5)
 							        .attr("stroke","blue")
 							        .attr("opacity", 0.4)
-							        .attr("x2", ratingsScaled[teamIndex])
-						            .attr("y2", function(d,i){
-						            	return (spacingOfLines*2+10)+ spacingOfLines*i;
-						            })
 									.transition()
 									.duration(this.duration)
 									.delay(this.delay)
@@ -980,7 +1149,55 @@ function canvas(height,width,border, radius,ratings){
 									.transition()
 									.duration(this.duration)
 			  						.delay(this.delay)
-						    		.attr("x1", ratingsScaled[teamIndex])
+						    		.attr("x1",function(d,i){
+											if(postionArray[i] == 1){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 2){
+												return opponentsRatingsScaled[i];
+											}else if(postionArray[i] == 3){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 4){
+												return opponentsRatingsScaled[i];
+											}else if(postionArray[i] == 5){
+												return scoreDifferenceScaled[i];
+											}else if(postionArray[i] == 6){
+												return opponentsRatingsScaled[i];
+											}
+										})
+									.attr("y1", function(d,i){
+										
+										if(postionArray[i] == 1){
+											return (spacingOfLines*2+5)+ spacingOfLines*i;
+										}else if(postionArray[i] == 2){
+											return (spacingOfLines*2)+ spacingOfLines*i;
+										}else if(postionArray[i] == 3){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}else if(postionArray[i] == 4){
+											return (spacingOfLines*2)+ spacingOfLines*i; 
+										}else if(postionArray[i] == 5){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}else if(postionArray[i] == 6){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}
+										
+									})
+									.attr("y2", function(d,i){
+										
+										if(postionArray[i] == 1){
+											return (spacingOfLines*2+5)+ spacingOfLines*i;
+										}else if(postionArray[i] == 2){
+											return (spacingOfLines*2)+ spacingOfLines*i;
+										}else if(postionArray[i] == 3){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}else if(postionArray[i] == 4){
+											return (spacingOfLines*2)+ spacingOfLines*i; 
+										}else if(postionArray[i] == 5){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}else if(postionArray[i] == 6){
+											return (spacingOfLines*2+10)+ spacingOfLines*i;
+										}
+										
+									})	 
 									.attr("x2", function(d){
 						        		return d;
 						    		});			

@@ -26,13 +26,13 @@ function leastSquares(wMatrix,scores,roundNumber){
         var wTranspose = math.matrix(wTranspose);
         var size = wTranspose.size();
         
-        
+       
         // Multiply the Wtranspose with the scoresarray to obtain the yvector
         var yVector = math.multiply(wTranspose,scoresDifference).valueOf();
-        
+         console.log("stop")
         // mulitply match matrix with its transpose to obtain x.
         var xMatrix = math.multiply(wTranspose, wMatrix);    
-        
+         
         // Change last element in 0
         yVector[yVector.length-1] = 0;
         

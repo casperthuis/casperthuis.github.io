@@ -16,13 +16,12 @@ function loadTournament(tournamentName, tournament, canvas){
     var scoresDifference = tournament.obtainScoresDifference(tournament.teamIndex, tournament.currentRound);
    
     canvas.updateCanvas(canvas.currentRating, tournament.teamIndex, opponents, scoresDifference, tournament.teamNames, tournament.ranks);
-    //canvas.updateCirclesColor(tournament.teamIndex, opponents);
-    //canvas.updateLegend(opponents, tournament.teamNames, tournament.TeamIndex, tournament.ranks);
+    
     $( "#tags" ).autocomplete({
       source: tournament.teamNames
       });
     
-
+    document.getElementById('pickTeamButton').onclick = function(){tournament.newGameTable(canvas);};
     
     //document.getElementById("pickTeamButton").setAttribute('onclick','tournament.newGameTable(canvas, canvas.currentRating)');
 }

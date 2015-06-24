@@ -23,12 +23,12 @@ function readAPI(tournamentName){
       // MIXED 2015 Uncomment to load in data
       //url: "https://api.leaguevine.com/v1/games/?tournament_id=19750&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
       // OPEN 2015 Uncomment to load in data
-      url: "https://api.leaguevine.com/v1/games/?tournament_id=19746&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+      //url: "https://api.leaguevine.com/v1/games/?tournament_id=19746&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
       // WOMEN 2015 Uncomment to load in data
       //url: "https://api.leaguevine.com/v1/games/?tournament_id=19747&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
       
 
-      //url: "https://api.leaguevine.com/v1/games/?tournament_id="+tournamentId+"&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
+      url: "https://api.leaguevine.com/v1/games/?tournament_id="+tournamentId+"&fields=[id%2Ctournament%2Cgame_site%2Cstart_time%2C%20swiss_round%2C%20team_1_id%2Cteam_2_id%2Cteam_1%2Cteam_2%2Cteam_1_score%2Cteam_2_score]&order_by=[start_time]&limit=200",
         
 
         //url: "data/apifilewithbugs.json",
@@ -70,10 +70,9 @@ function readAPI(tournamentName){
             //Create a list of the teamNames to create indexs of the teamNames
             for(var i = 0; i < data.objects.length;i++){
               //console.log(data.objects[i].team_1);
-              if(!data.objects[i].team_1){
+              if(!data.objects[i].team_1 || !data.objects[i].team_2){
                 continue;
               }
-              
               var teamName1 = data.objects[i].team_1.short_name;
               var teamName2 = data.objects[i].team_2.short_name;
               if($.inArray(teamName1,teamNames) === -1){
@@ -83,8 +82,6 @@ function readAPI(tournamentName){
                 teamNames[teamNames.length] = teamName2; 
               }
             }
-            console.log(teamNames)
-            
             /* Create a matchMatrix with the following objects
             	- id of match
             	- team index 1
@@ -99,8 +96,7 @@ function readAPI(tournamentName){
             
             
             for(var i = 0; i < data.objects.length;i++){
-              
-              if(!data.objects[i].swiss_round_id){
+              if(!data.objects[i].swiss_round_id || !data.objects[i].team_2 || !data.objects[i].team_1){
                 continue;
               }
               var id = data.objects[i].id;
@@ -114,10 +110,7 @@ function readAPI(tournamentName){
               //location = //data.objects[i].game_site.event_site.name //+ ": " + data.objects[i].game_site.name;
               
               
-              
-              
               var round = data.objects[i].swiss_round.round_number;
-              
               
               var startTime = data.objects[i].start_time;
 

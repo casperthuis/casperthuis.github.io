@@ -7,6 +7,37 @@ body {
   padding-top: 50px;
 }
 
+div.tooltiplines {   
+  position: absolute;           
+  text-align: center;           
+  width: 100px;                  
+  height: 70px;                 
+  padding: 2px;             
+  font: 12px sans-serif;        
+  background: #F2E394;   
+  border: 3px;      
+  border-radius: 8px;           
+  pointer-events: none;
+  font-weight: bold;
+    border-style: solid;
+    border-color:  #1E1E1E;      
+}
+
+div.tooltip {   
+  position: absolute;           
+  text-align: center;           
+  width: 120px;                  
+  height: 40px;                 
+  padding: 2px;             
+  font: 12px sans-serif;        
+  background: #F2E394;   
+  border: 3px;      
+  border-radius: 8px;           
+  pointer-events: none;
+  font-weight: bold;
+    border-style: solid;
+    border-color:  #1E1E1E;      
+}
 
 .scoresButtons{
   background-color: #428bca;

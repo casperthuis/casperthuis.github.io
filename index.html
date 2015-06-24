@@ -1,3 +1,13 @@
+<!--
+  Welcome intersted user. This website is devolped to visualised massey method. If you want to alter the code that is great! Let me explain how every thing works. Above every function is an general explaintion given of the function, important calculation within and input and output. There are 2 main objects that interact with each other. TournamentObject and Canvas. TournamentObject contains data from one tournament and creates html table related with the data. Canvas is respondible for the visualisation. Furthermore, there are an couple of other function that function separetly , such as LoadnewRound, loadTournament, leastSquares and readAPI. Explaintions are given within these function the for the function in the objects. The general flow of the program is as followed: 
+   - readAPI(TournamentName) [Read the data from leageauvine via an API request and return an tournamentObject]
+   - LeastSquare(WMatrix, SMatrix) [Read the Wmatrix and SMatrix from createMatrix function of tournamentObject, it returns the ratings for every team]
+   - tournament.listScores [Create an HTML table that list the scores that an in the tournamentObject. It creates several buttons that communicate with the canvas object]
+   - canvas() [creates the canvas object]
+   - several canvas create function are called to create the visualisation.  
+
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -131,7 +141,7 @@
           <form id="inputTeamName" class="col-sm-4">
             <input id="tags" type="text" class="form-control" placeholder="Pick a team...">
           </form>
-          <button id="pickTeamButton" onclick="teamPicked()" class="col-sm-1" class="btn btn-primary btn-sm"> Pick Team  <span class=' glyphicon glyphicon-refresh'></span></button>
+          <button id="pickTeamButton" onclick="tournament.newGameTable(canvas)" class="col-sm-1" class="btn btn-primary btn-sm"> Pick Team  <span class=' glyphicon glyphicon-refresh'></span></button>
           <div class="ui-widget">
           </div>
           <div class="col-sm-12">
@@ -164,15 +174,13 @@
     <script>
     
     
-    
-    function teamPicked(){
-      console.log(tournament)
-      tournament.newGameTable(canvas)
-    }
+      
 
-    //listScores(teamNames, wMatrix, scores, teamName);
+
+    
+
     // get  data and create a tourment object.
-    tournament = readAPI("Open2015");
+    tournament = readAPI("Women2012");
     // Intialize a team for first round.
 
 
@@ -187,29 +195,38 @@
 
     
 
-   
+    // create wMatrix and SMatrix that are needed for leastsquare calculations
     var wMatrix = tournament.createWMatrix();
     var sMatrix = tournament.createSMatrix();
+    // calculate the ratings with the help of leastsqaures
     var ratings = leastSquares(wMatrix,sMatrix,tournament.roundNumber);
     
     //showRating(tournament.teamNames, ratings);
-    console.log("1")
+    // Creates an HTML table that list scores and creates button so that the users can change the scores.
     tournament.listScoresInTable(tournament.teamName);
-    console.log("1")
+    
+    // Determine the direct opponents need for the visualisation.
     var opponents = tournament.getOpponents(tournament.teamIndex,tournament.currentRound);
     
+    // Create an canvas object.
     var canvas = new canvas(500, 1500, 10, 10, ratings);
       
+    // Create the line that the teams are scaled upon.  
     canvas.createLines(0);
-    canvas.createAxis(ratings);
+    // Creates an axis, Currently disabled.
+    //canvas.createAxis(ratings);
 
-
+    // Create the teams in the visualisation, Teams are represented by circles.
     canvas.createRatingCircles(ratings, opponents, tournament.teamNames, tournament.teamName);
+    // Calculate the ranks of the teams.
     var ranks = tournament.obtainRankTeams(ratings);
+    // Create a legend that shows the opponets of the teamSelected.
     canvas.createLegend(opponents, tournament.teamNames, tournament.teamIndex, ranks);
 
-    var scoresDifference = tournament.obtainScoresDifference(tournament.teamNames.indexOf(tournament.teamName), tournament.currentRound);
+    // Calculate the score between the opponents and the selected team
+    var scoresDifference = tournament.obtainScoresDifference(tournament.teamIndex, tournament.currentRound);
     
+    // Draw the lines that represented the match lines which contains error lines, ratings difference lines and score difference lines.
     canvas.drawMatchLines(tournament.teamNames.indexOf(tournament.teamName), opponents, scoresDifference)
    
     
