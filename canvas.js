@@ -604,7 +604,7 @@ function canvas(height,width,border, radius,ratings){
 										
 									})
 									.attr("stroke-width", 5)
-							        .attr("stroke","blue")
+							        .attr("stroke","red")
 							        .attr("opacity", 0.4)
 							        
 							        	//ratingsScaled[teamIndex])
@@ -679,7 +679,7 @@ function canvas(height,width,border, radius,ratings){
 						            	return (spacingOfLines*2+5)+ spacingOfLines*i;
 						            })
 						            .attr("stroke-width", 5)
-							        .attr("stroke","red")
+							        .attr("stroke","blue")
 							        .attr("opacity", 0.4)
 							        .on("mouseover", function(d,i) {      
 				            			div.transition()        
@@ -1013,7 +1013,7 @@ function canvas(height,width,border, radius,ratings){
 						            	return (spacingOfLines*2+5)+ spacingOfLines*i;
 						            })
 						            .attr("stroke-width", 5)
-							        .attr("stroke","red")
+							        .attr("stroke","blue")
 							        .attr("opacity", 0.4)
 							        .transition()
 									.duration(this.duration)
@@ -1115,7 +1115,7 @@ function canvas(height,width,border, radius,ratings){
 									})
 									
 									.attr("stroke-width", 5)
-							        .attr("stroke","blue")
+							        .attr("stroke","red")
 							        .attr("opacity", 0.4)
 									.transition()
 									.duration(this.duration)
